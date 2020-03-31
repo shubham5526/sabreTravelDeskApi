@@ -2,8 +2,8 @@ import flask
 from flask import request, jsonify
 import requests
 
-app = Flask(__name__)
-api = Api(app)
+app = flask.Flask(__name__)
+app.config["DEBUG"] = True
 
 
 @app.route('/', methods=['GET'])
