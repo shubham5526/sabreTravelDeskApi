@@ -93,7 +93,6 @@ def home():
 @app.route('/api/v1/resources/bargainer/all', methods=['GET'])
 def api_all():
     r = requests.post(url=API_ENDPOINT, json=data, headers=hed)
-    print(json.dumps(json.loads(r.content), indent=4, sort_keys=True))
     return json.dumps(json.loads(r.content), indent=4, sort_keys=True)
 
 
