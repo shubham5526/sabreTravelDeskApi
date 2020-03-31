@@ -86,5 +86,11 @@ data = {
 @app.route('/')
 def hello_world():
     return 'Hello, World!'
+
+@app.route('/api/v1/resources/bargainer/all', methods=['GET'])
+def api_all():
+    r = requests.post(url=API_ENDPOINT, json=data, headers=hed)
+    return str(r.content)
+
 if __name__ == '__main__':
     app.run()
