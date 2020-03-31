@@ -2,8 +2,8 @@ import flask
 from flask import request, jsonify
 import requests
 
-app = flask.Flask(__name__)
-app.config["DEBUG"] = True
+app = Flask(__name__)
+api = Api(app)
 
 API_ENDPOINT = "https://api-crt.cert.havail.sabre.com/v1/offers/shop"
 
