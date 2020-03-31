@@ -1,13 +1,15 @@
-from flask import Flask
+import flask
+from flask import request, jsonify
 import requests
+import json
 
-app = Flask(__name__)
+app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
 API_ENDPOINT = "https://api-crt.cert.havail.sabre.com/v1/offers/shop"
 
 API_KEY = "T1RLAQKledIevdAVWMw9mzfq6pw5LDHyaRBzDFYeCW9e/FiWq+jriV3wAACwjT8vPq1ydjjF+7Zb0fhKi96s5gthT26me19/GXkihKbOa0NHEC5o6JRA1lbK2CLjPKDgZXk6cHr9bTfQ/Jf0lGsfC/cfjfA0GZGG+EaQlvttsR8boKwHdh1cfQXPZe9o+Oz4+tSf0gIeT/1M50U7cP3zAQPlqiNys+Kz8C2g5tYmOFRCivK0pgEPIe3fWr1llAvkfCVllH0NKOjCQo3p8g9BHdy3qL1+BA7GeCatHv0*"
-hed = {'Authorization': 'Bearer ' + API_KEY}
+hed = {'Authorization': 'Bearer ' + API_KEY, 'Content-Type': 'application/json'}
 data = {
     "OTA_AirLowFareSearchRQ": {
         "OriginDestinationInformation": [
@@ -83,14 +85,16 @@ data = {
 }
 
 
-@app.route('/')
-def hello_world():
-    return 'Hello, World!'
+@app.route('/', methods=['GET'])
+def home():
+    return "<h1>Distant Reading Archive</h1><p>This site is a prototype API for distant reading of science fiction novels.</p>"
+
 
 @app.route('/api/v1/resources/bargainer/all', methods=['GET'])
 def api_all():
     r = requests.post(url=API_ENDPOINT, json=data, headers=hed)
-    return str(r.content)
+    print(json.dumps(json.loads(r.content), indent=4, sort_keys=True))
+    return json.dumps(json.loads(r.content), indent=4, sort_keys=True)
 
-if __name__ == '__main__':
-    app.run()
+
+app.run()
