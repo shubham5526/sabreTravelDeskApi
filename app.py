@@ -355,6 +355,7 @@ class Station(Enum):
     JFK = "JFK"
     PHX = "PHX"
     SFO = "SFO"
+    LGA = "LGA"
 
 
 class LegDescription:
