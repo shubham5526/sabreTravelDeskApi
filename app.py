@@ -356,6 +356,7 @@ class Station(Enum):
     PHX = "PHX"
     SFO = "SFO"
     LGA = "LGA"
+    SWF = "SWF"
 
 
 class LegDescription:
