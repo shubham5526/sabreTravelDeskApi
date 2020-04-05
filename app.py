@@ -446,6 +446,7 @@ class GoverningCarriers(Enum):
     DL_AS = "DL AS"
     DL_DL = "DL DL"
     UA_UA = "UA UA"
+    AS_DL = "AS DL"
 
 
 class TerminalEnum(Enum):
