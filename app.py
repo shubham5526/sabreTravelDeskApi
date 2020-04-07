@@ -2,13 +2,29 @@ import flask
 from flask import request, jsonify
 import requests
 import json
+# This code parses date/times, so please
+#
+#     pip install python-dateutil
+#
+# To use this code, make sure you
+#
+#     import json
+#
+# and then, to convert JSON from a string, do
+#
+#     result = welcome_from_dict(json.loads(json_string))
+
+from typing import Any, Optional, List, Union, TypeVar, Type, cast, Callable
+from enum import Enum
+from datetime import datetime
+import dateutil.parser
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
 API_ENDPOINT = "https://api-crt.cert.havail.sabre.com/v1/offers/shop"
 
-API_KEY = "T1RLAQKledIevdAVWMw9mzfq6pw5LDHyaRBzDFYeCW9e/FiWq+jriV3wAACwjT8vPq1ydjjF+7Zb0fhKi96s5gthT26me19/GXkihKbOa0NHEC5o6JRA1lbK2CLjPKDgZXk6cHr9bTfQ/Jf0lGsfC/cfjfA0GZGG+EaQlvttsR8boKwHdh1cfQXPZe9o+Oz4+tSf0gIeT/1M50U7cP3zAQPlqiNys+Kz8C2g5tYmOFRCivK0pgEPIe3fWr1llAvkfCVllH0NKOjCQo3p8g9BHdy3qL1+BA7GeCatHv0*"
+API_KEY = "T1RLAQInw6WMg9xTG20+MvAj689oRyeVzBATpxuxvvthpPL+ZfsCNz38AACwZaV2j+XokIX+BquQUtkxwiR/5tNI3YNK8oRUkVCKyh0eL9RnPScxsmqOIhNPtrBHwnAMXOu4IBTU1dclo7slRY4Ak5xcnYisuPSuw4+pIm6rZiD7a/EFkEEmXJxwEl2uGatj+uGuuycQ9NZwxR6CK7iVEtn8Of8lTy0PAGCsx8Ar2WhjKkuE2Nwu2QecwSfYxHpnvKYIkHKRH/byt4V8Z2rtISUyky+0hkPFGqju2+s*"
 hed = {'Authorization': 'Bearer ' + API_KEY, 'Content-Type': 'application/json'}
 data = {
     "OTA_AirLowFareSearchRQ": {
@@ -83,23 +99,6 @@ data = {
         "Version": "1"
     }
 }
-
-# This code parses date/times, so please
-#
-#     pip install python-dateutil
-#
-# To use this code, make sure you
-#
-#     import json
-#
-# and then, to convert JSON from a string, do
-#
-#     result = welcome_from_dict(json.loads(json_string))
-
-from typing import Any, Optional, List, Union, TypeVar, Type, cast, Callable
-from enum import Enum
-from datetime import datetime
-import dateutil.parser
 
 T = TypeVar("T")
 EnumT = TypeVar("EnumT", bound=Enum)
@@ -280,7 +279,12 @@ class FareComponentDesc:
     vendorCode: VendorCode
     notValidBefore: Optional[datetime]
 
-    def __init__(self, applicablePricingCategories: str, direction: Direction, directionality: Directionality, fareAmount: int, fareBasisCode: str, fareCurrency: FareCurrency, farePassengerType: PassengerType, fareRule: str, fareTariff: int, fareType: FareType, fareTypeBitmap: str, governingCarrier: GoverningCarrier, id: int, notValidAfter: datetime, oneWayFare: bool, publishedFareAmount: int, segments: List[FareComponentDescSegment], vendorCode: VendorCode, notValidBefore: Optional[datetime]) -> None:
+    def __init__(self, applicablePricingCategories: str, direction: Direction, directionality: Directionality,
+                 fareAmount: int, fareBasisCode: str, fareCurrency: FareCurrency, farePassengerType: PassengerType,
+                 fareRule: str, fareTariff: int, fareType: FareType, fareTypeBitmap: str,
+                 governingCarrier: GoverningCarrier, id: int, notValidAfter: datetime, oneWayFare: bool,
+                 publishedFareAmount: int, segments: List[FareComponentDescSegment], vendorCode: VendorCode,
+                 notValidBefore: Optional[datetime]) -> None:
         self.applicablePricingCategories = applicablePricingCategories
         self.direction = direction
         self.directionality = directionality
@@ -323,7 +327,10 @@ class FareComponentDesc:
         segments = from_list(FareComponentDescSegment.from_dict, obj.get("segments"))
         vendorCode = VendorCode(obj.get("vendorCode"))
         notValidBefore = from_union([from_datetime, from_none], obj.get("notValidBefore"))
-        return FareComponentDesc(applicablePricingCategories, direction, directionality, fareAmount, fareBasisCode, fareCurrency, farePassengerType, fareRule, fareTariff, fareType, fareTypeBitmap, governingCarrier, id, notValidAfter, oneWayFare, publishedFareAmount, segments, vendorCode, notValidBefore)
+        return FareComponentDesc(applicablePricingCategories, direction, directionality, fareAmount, fareBasisCode,
+                                 fareCurrency, farePassengerType, fareRule, fareTariff, fareType, fareTypeBitmap,
+                                 governingCarrier, id, notValidAfter, oneWayFare, publishedFareAmount, segments,
+                                 vendorCode, notValidBefore)
 
     def to_dict(self) -> dict:
         result: dict = {}
@@ -349,22 +356,21 @@ class FareComponentDesc:
         return result
 
 
-class Station(Enum):
-    DTW = "DTW"
-    EWR = "EWR"
-    JFK = "JFK"
-    PHX = "PHX"
-    SFO = "SFO"
-    LGA = "LGA"
-    SWF = "SWF"
+# class Station(Enum):
+#   DTW = "DTW"
+#  EWR = "EWR"
+# JFK = "JFK"
+# PHX = "PHX"
+# SFO = "SFO"
+# LGA = "LGA"
 
 
 class LegDescription:
-    arrivalLocation: Station
+    arrivalLocation: str
     departureDate: datetime
-    departureLocation: Station
+    departureLocation: str
 
-    def __init__(self, arrivalLocation: Station, departureDate: datetime, departureLocation: Station) -> None:
+    def __init__(self, arrivalLocation: str, departureDate: datetime, departureLocation: str) -> None:
         self.arrivalLocation = arrivalLocation
         self.departureDate = departureDate
         self.departureLocation = departureLocation
@@ -372,14 +378,14 @@ class LegDescription:
     @staticmethod
     def from_dict(obj: Any) -> 'LegDescription':
         assert isinstance(obj, dict)
-        arrivalLocation = Station(obj.get("arrivalLocation"))
+        arrivalLocation = obj.get("arrivalLocation")
         departureDate = from_datetime(obj.get("departureDate"))
         departureLocation = obj.get("departureLocation")
         return LegDescription(arrivalLocation, departureDate, departureLocation)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["arrivalLocation"] = to_enum(Station, self.arrivalLocation)
+        result["arrivalLocation"] = self.arrivalLocation
         result["departureDate"] = self.departureDate.isoformat()
         result["departureLocation"] = self.departureLocation
         return result
@@ -439,21 +445,20 @@ class Schedule:
         return result
 
 
-class GoverningCarriers(Enum):
-    AA_AA = "AA AA"
-    AS_AS = "AS AS"
-    B6_B6 = "B6 B6"
-    DL_AS = "DL AS"
-    DL_DL = "DL DL"
-    UA_UA = "UA UA"
-    AS_DL = "AS DL"
+#class GoverningCarriers(Enum):
+#    AA_AA = "AA AA"
+#    AS_AS = "AS AS"
+#    B6_B6 = "B6 B6"
+#    DL_AS = "DL AS"
+#    DL_DL = "DL DL"
+#    UA_UA = "UA UA"
 
 
-class TerminalEnum(Enum):
-    A = "A"
-    B = "B"
-    C = "C"
-    EM = "EM"
+#class TerminalEnum(Enum):
+#    A = "A"
+#    B = "B"
+#    C = "C"
+#    EM = "EM"
 
 
 class BaggageInformationSegment:
@@ -477,10 +482,11 @@ class BaggageInformationSegment:
 class BaggageInformation:
     airlineCode: GoverningCarrier
     allowance: Schedule
-    provisionType: TerminalEnum
+    provisionType: str
     segments: List[BaggageInformationSegment]
 
-    def __init__(self, airlineCode: GoverningCarrier, allowance: Schedule, provisionType: TerminalEnum, segments: List[BaggageInformationSegment]) -> None:
+    def __init__(self, airlineCode: GoverningCarrier, allowance: Schedule, provisionType: str,
+                 segments: List[BaggageInformationSegment]) -> None:
         self.airlineCode = airlineCode
         self.allowance = allowance
         self.provisionType = provisionType
@@ -491,7 +497,7 @@ class BaggageInformation:
         assert isinstance(obj, dict)
         airlineCode = GoverningCarrier(obj.get("airlineCode"))
         allowance = Schedule.from_dict(obj.get("allowance"))
-        provisionType = TerminalEnum(obj.get("provisionType"))
+        provisionType = obj.get("provisionType")
         segments = from_list(BaggageInformationSegment.from_dict, obj.get("segments"))
         return BaggageInformation(airlineCode, allowance, provisionType, segments)
 
@@ -499,7 +505,7 @@ class BaggageInformation:
         result: dict = {}
         result["airlineCode"] = to_enum(GoverningCarrier, self.airlineCode)
         result["allowance"] = to_class(Schedule, self.allowance)
-        result["provisionType"] = to_enum(TerminalEnum, self.provisionType)
+        result["provisionType"] = self.provisionType
         result["segments"] = from_list(lambda x: to_class(BaggageInformationSegment, x), self.segments)
         return result
 
@@ -558,7 +564,8 @@ class FluffySegment:
     mealCode: Optional[MealCode]
     seatsAvailable: int
 
-    def __init__(self, availabilityBreak: Optional[bool], bookingCode: DotRating, cabinCode: CabinCode, mealCode: Optional[MealCode], seatsAvailable: int) -> None:
+    def __init__(self, availabilityBreak: Optional[bool], bookingCode: DotRating, cabinCode: CabinCode,
+                 mealCode: Optional[MealCode], seatsAvailable: int) -> None:
         self.availabilityBreak = availabilityBreak
         self.bookingCode = bookingCode
         self.cabinCode = cabinCode
@@ -690,7 +697,10 @@ class PassengerTotalFare:
     totalFare: float
     totalTaxAmount: float
 
-    def __init__(self, baseFareAmount: int, baseFareCurrency: FareCurrency, commissionAmount: int, commissionPercentage: int, constructionAmount: int, constructionCurrency: FareCurrency, currency: FareCurrency, equivalentAmount: int, equivalentCurrency: FareCurrency, exchangeRateOne: int, totalFare: float, totalTaxAmount: float) -> None:
+    def __init__(self, baseFareAmount: int, baseFareCurrency: FareCurrency, commissionAmount: int,
+                 commissionPercentage: int, constructionAmount: int, constructionCurrency: FareCurrency,
+                 currency: FareCurrency, equivalentAmount: int, equivalentCurrency: FareCurrency, exchangeRateOne: int,
+                 totalFare: float, totalTaxAmount: float) -> None:
         self.baseFareAmount = baseFareAmount
         self.baseFareCurrency = baseFareCurrency
         self.commissionAmount = commissionAmount
@@ -719,7 +729,9 @@ class PassengerTotalFare:
         exchangeRateOne = obj.get("exchangeRateOne")
         totalFare = from_float(obj.get("totalFare"))
         totalTaxAmount = from_float(obj.get("totalTaxAmount"))
-        return PassengerTotalFare(baseFareAmount, baseFareCurrency, commissionAmount, commissionPercentage, constructionAmount, constructionCurrency, currency, equivalentAmount, equivalentCurrency, exchangeRateOne, totalFare, totalTaxAmount)
+        return PassengerTotalFare(baseFareAmount, baseFareCurrency, commissionAmount, commissionPercentage,
+                                  constructionAmount, constructionCurrency, currency, equivalentAmount,
+                                  equivalentCurrency, exchangeRateOne, totalFare, totalTaxAmount)
 
     def to_dict(self) -> dict:
         result: dict = {}
@@ -750,7 +762,10 @@ class PassengerInfo:
     taxSummaries: List[Schedule]
     taxes: List[Schedule]
 
-    def __init__(self, baggageInformation: List[BaggageInformation], currencyConversion: CurrencyConversion, fareComponents: List[FareComponent], fareMessages: List[FareMessage], nonRefundable: bool, passengerNumber: int, passengerTotalFare: PassengerTotalFare, passengerType: PassengerType, taxSummaries: List[Schedule], taxes: List[Schedule]) -> None:
+    def __init__(self, baggageInformation: List[BaggageInformation], currencyConversion: CurrencyConversion,
+                 fareComponents: List[FareComponent], fareMessages: List[FareMessage], nonRefundable: bool,
+                 passengerNumber: int, passengerTotalFare: PassengerTotalFare, passengerType: PassengerType,
+                 taxSummaries: List[Schedule], taxes: List[Schedule]) -> None:
         self.baggageInformation = baggageInformation
         self.currencyConversion = currencyConversion
         self.fareComponents = fareComponents
@@ -775,7 +790,8 @@ class PassengerInfo:
         passengerType = PassengerType(obj.get("passengerType"))
         taxSummaries = from_list(Schedule.from_dict, obj.get("taxSummaries"))
         taxes = from_list(Schedule.from_dict, obj.get("taxes"))
-        return PassengerInfo(baggageInformation, currencyConversion, fareComponents, fareMessages, nonRefundable, passengerNumber, passengerTotalFare, passengerType, taxSummaries, taxes)
+        return PassengerInfo(baggageInformation, currencyConversion, fareComponents, fareMessages, nonRefundable,
+                             passengerNumber, passengerTotalFare, passengerType, taxSummaries, taxes)
 
     def to_dict(self) -> dict:
         result: dict = {}
@@ -820,7 +836,9 @@ class TotalFare:
     totalPrice: float
     totalTaxAmount: float
 
-    def __init__(self, baseFareAmount: int, baseFareCurrency: FareCurrency, constructionAmount: int, constructionCurrency: FareCurrency, currency: FareCurrency, equivalentCurrency: FareCurrency, totalPrice: float, totalTaxAmount: float) -> None:
+    def __init__(self, baseFareAmount: int, baseFareCurrency: FareCurrency, constructionAmount: int,
+                 constructionCurrency: FareCurrency, currency: FareCurrency, equivalentCurrency: FareCurrency,
+                 totalPrice: float, totalTaxAmount: float) -> None:
         self.baseFareAmount = baseFareAmount
         self.baseFareCurrency = baseFareCurrency
         self.constructionAmount = constructionAmount
@@ -841,7 +859,8 @@ class TotalFare:
         equivalentCurrency = FareCurrency(obj.get("equivalentCurrency"))
         totalPrice = from_float(obj.get("totalPrice"))
         totalTaxAmount = from_float(obj.get("totalTaxAmount"))
-        return TotalFare(baseFareAmount, baseFareCurrency, constructionAmount, constructionCurrency, currency, equivalentCurrency, totalPrice, totalTaxAmount)
+        return TotalFare(baseFareAmount, baseFareCurrency, constructionAmount, constructionCurrency, currency,
+                         equivalentCurrency, totalPrice, totalTaxAmount)
 
     def to_dict(self) -> dict:
         result: dict = {}
@@ -858,7 +877,7 @@ class TotalFare:
 
 class Fare:
     eTicketable: bool
-    governingCarriers: GoverningCarriers
+    governingCarriers: str
     lastTicketDate: datetime
     passengerInfoList: List[PassengerInfoList]
     totalFare: TotalFare
@@ -866,7 +885,9 @@ class Fare:
     validatingCarriers: List[Schedule]
     vita: bool
 
-    def __init__(self, eTicketable: bool, governingCarriers: GoverningCarriers, lastTicketDate: datetime, passengerInfoList: List[PassengerInfoList], totalFare: TotalFare, validatingCarrierCode: GoverningCarrier, validatingCarriers: List[Schedule], vita: bool) -> None:
+    def __init__(self, eTicketable: bool, governingCarriers: str, lastTicketDate: datetime,
+                 passengerInfoList: List[PassengerInfoList], totalFare: TotalFare,
+                 validatingCarrierCode: GoverningCarrier, validatingCarriers: List[Schedule], vita: bool) -> None:
         self.eTicketable = eTicketable
         self.governingCarriers = governingCarriers
         self.lastTicketDate = lastTicketDate
@@ -880,19 +901,20 @@ class Fare:
     def from_dict(obj: Any) -> 'Fare':
         assert isinstance(obj, dict)
         eTicketable = from_bool(obj.get("eTicketable"))
-        governingCarriers = GoverningCarriers(obj.get("governingCarriers"))
+        governingCarriers = obj.get("governingCarriers")
         lastTicketDate = from_datetime(obj.get("lastTicketDate"))
         passengerInfoList = from_list(PassengerInfoList.from_dict, obj.get("passengerInfoList"))
         totalFare = TotalFare.from_dict(obj.get("totalFare"))
         validatingCarrierCode = GoverningCarrier(obj.get("validatingCarrierCode"))
         validatingCarriers = from_list(Schedule.from_dict, obj.get("validatingCarriers"))
         vita = from_bool(obj.get("vita"))
-        return Fare(eTicketable, governingCarriers, lastTicketDate, passengerInfoList, totalFare, validatingCarrierCode, validatingCarriers, vita)
+        return Fare(eTicketable, governingCarriers, lastTicketDate, passengerInfoList, totalFare, validatingCarrierCode,
+                    validatingCarriers, vita)
 
     def to_dict(self) -> dict:
         result: dict = {}
         result["eTicketable"] = from_bool(self.eTicketable)
-        result["governingCarriers"] = to_enum(GoverningCarriers, self.governingCarriers)
+        result["governingCarriers"] = self.governingCarriers
         result["lastTicketDate"] = self.lastTicketDate.isoformat()
         result["passengerInfoList"] = from_list(lambda x: to_class(PassengerInfoList, x), self.passengerInfoList)
         result["totalFare"] = to_class(TotalFare, self.totalFare)
@@ -939,7 +961,8 @@ class Itinerary:
     pricingInformation: List[PricingInformation]
     pricingSource: PricingSource
 
-    def __init__(self, diversitySwapper: DiversitySwapper, id: int, legs: List[Schedule], pricingInformation: List[PricingInformation], pricingSource: PricingSource) -> None:
+    def __init__(self, diversitySwapper: DiversitySwapper, id: int, legs: List[Schedule],
+                 pricingInformation: List[PricingInformation], pricingSource: PricingSource) -> None:
         self.diversitySwapper = diversitySwapper
         self.id = id
         self.legs = legs
@@ -1060,15 +1083,16 @@ class State(Enum):
 
 
 class Arrival:
-    airport: Station
+    airport: str
     city: City
     country: Country
     dateAdjustment: Optional[int]
     state: State
-    terminal: Union[TerminalEnum, int]
+    terminal: str
     time: datetime
 
-    def __init__(self, airport: Station, city: City, country: Country, dateAdjustment: Optional[int], state: State, terminal: Union[TerminalEnum, int], time: datetime) -> None:
+    def __init__(self, airport: str, city: City, country: Country, dateAdjustment: Optional[int], state: State,
+                 terminal: str, time: datetime) -> None:
         self.airport = airport
         self.city = city
         self.country = country
@@ -1096,7 +1120,7 @@ class Arrival:
         result["country"] = to_enum(Country, self.country)
         result["dateAdjustment"] = from_union([from_int, from_none], self.dateAdjustment)
         result["state"] = self.state
-        result["terminal"] =  self.terminal
+        result["terminal"] = self.terminal
         result["strtime"] = self.time.isoformat()
         return result
 
@@ -1135,7 +1159,8 @@ class Carrier:
     operatingFlightNumber: int
     alliances: Optional[str]
 
-    def __init__(self, equipment: Equipment, marketing: GoverningCarrier, marketingFlightNumber: int, operating: GoverningCarrier, operatingFlightNumber: int, alliances: Optional[str]) -> None:
+    def __init__(self, equipment: Equipment, marketing: GoverningCarrier, marketingFlightNumber: int,
+                 operating: GoverningCarrier, operatingFlightNumber: int, alliances: Optional[str]) -> None:
         self.equipment = equipment
         self.marketing = marketing
         self.marketingFlightNumber = marketingFlightNumber
@@ -1177,7 +1202,9 @@ class ScheduleDesc:
     totalMilesFlown: int
     onTimePerformance: Optional[int]
 
-    def __init__(self, arrival: Arrival, carrier: Carrier, departure: Arrival, dotRating: Union[DotRating, int, None], eTicketable: bool, frequency: str, id: int, stopCount: int, totalMilesFlown: int, onTimePerformance: Optional[int]) -> None:
+    def __init__(self, arrival: Arrival, carrier: Carrier, departure: Arrival, dotRating: Union[DotRating, int, None],
+                 eTicketable: bool, frequency: str, id: int, stopCount: int, totalMilesFlown: int,
+                 onTimePerformance: Optional[int]) -> None:
         self.arrival = arrival
         self.carrier = carrier
         self.departure = departure
@@ -1195,21 +1222,27 @@ class ScheduleDesc:
         arrival = Arrival.from_dict(obj.get("arrival"))
         carrier = Carrier.from_dict(obj.get("carrier"))
         departure = Arrival.from_dict(obj.get("departure"))
-        dotRating = from_union([from_none, lambda x: from_union([DotRating, lambda x: int(x)], from_str(x))], obj.get("dotRating"))
+        dotRating = from_union([from_none, lambda x: from_union([DotRating, lambda x: int(x)], from_str(x))],
+                               obj.get("dotRating"))
         eTicketable = from_bool(obj.get("eTicketable"))
         frequency = from_str(obj.get("frequency"))
         id = from_int(obj.get("id"))
         stopCount = from_int(obj.get("stopCount"))
         totalMilesFlown = from_int(obj.get("totalMilesFlown"))
         onTimePerformance = from_union([from_int, from_none], obj.get("onTimePerformance"))
-        return ScheduleDesc(arrival, carrier, departure, dotRating, eTicketable, frequency, id, stopCount, totalMilesFlown, onTimePerformance)
+        return ScheduleDesc(arrival, carrier, departure, dotRating, eTicketable, frequency, id, stopCount,
+                            totalMilesFlown, onTimePerformance)
 
     def to_dict(self) -> dict:
         result: dict = {}
         result["arrival"] = to_class(Arrival, self.arrival)
         result["carrier"] = to_class(Carrier, self.carrier)
         result["departure"] = to_class(Arrival, self.departure)
-        result["dotRating"] = from_union([lambda x: from_none((lambda x: is_type(type(None), x))(x)), lambda x: from_str((lambda x: to_enum(DotRating, (lambda x: is_type(DotRating, x))(x)))(x)), lambda x: from_str((lambda x: str((lambda x: is_type(int, x))(x)))(x))], self.dotRating)
+        result["dotRating"] = from_union([lambda x: from_none((lambda x: is_type(type(None), x))(x)),
+                                          lambda x: from_str(
+                                              (lambda x: to_enum(DotRating, (lambda x: is_type(DotRating, x))(x)))(x)),
+                                          lambda x: from_str((lambda x: str((lambda x: is_type(int, x))(x)))(x))],
+                                         self.dotRating)
         result["eTicketable"] = from_bool(self.eTicketable)
         result["frequency"] = from_str(self.frequency)
         result["id"] = from_int(self.id)
@@ -1257,9 +1290,10 @@ class TaxDesc:
     id: int
     publishedAmount: float
     publishedCurrency: FareCurrency
-    station: Station
+    station: str
 
-    def __init__(self, amount: float, code: Code, country: Country, currency: FareCurrency, description: Description, id: int, publishedAmount: float, publishedCurrency: FareCurrency, station: Station) -> None:
+    def __init__(self, amount: float, code: Code, country: Country, currency: FareCurrency, description: Description,
+                 id: int, publishedAmount: float, publishedCurrency: FareCurrency, station: str) -> None:
         self.amount = amount
         self.code = code
         self.country = country
@@ -1323,7 +1357,8 @@ class ValidatingCarrierDesc:
     settlementMethod: str
     alternates: Optional[List[Default]]
 
-    def __init__(self, default: Default, id: int, newVcxProcess: bool, settlementMethod: str, alternates: Optional[List[Default]]) -> None:
+    def __init__(self, default: Default, id: int, newVcxProcess: bool, settlementMethod: str,
+                 alternates: Optional[List[Default]]) -> None:
         self.default = default
         self.id = id
         self.newVcxProcess = newVcxProcess
@@ -1346,24 +1381,29 @@ class ValidatingCarrierDesc:
         result["id"] = from_int(self.id)
         result["newVcxProcess"] = from_bool(self.newVcxProcess)
         result["settlementMethod"] = from_str(self.settlementMethod)
-        result["alternates"] = from_union([lambda x: from_list(lambda x: to_class(Default, x), x), from_none], self.alternates)
+        result["alternates"] = from_union([lambda x: from_list(lambda x: to_class(Default, x), x), from_none],
+                                          self.alternates)
         return result
 
 
 class GroupedItineraryResponse:
-    #baggageAllowanceDescs: List[BaggageAllowanceDesc]
+    # baggageAllowanceDescs: List[BaggageAllowanceDesc]
     fareComponentDescs: List[FareComponentDesc]
     itineraryGroups: List[ItineraryGroup]
-    #legDescs: List[LegDesc]
+    # legDescs: List[LegDesc]
     messages: List[Message]
     scheduleDescs: List[ScheduleDesc]
-    #statistics: Statistics
-    #taxDescs: List[TaxDesc]
-    #taxSummaryDescs: List[TaxDesc]
-    #validatingCarrierDescs: List[ValidatingCarrierDesc]
+    # statistics: Statistics
+    # taxDescs: List[TaxDesc]
+    # taxSummaryDescs: List[TaxDesc]
+    # validatingCarrierDescs: List[ValidatingCarrierDesc]
     version: str
 
-    def __init__(self, baggageAllowanceDescs: List[BaggageAllowanceDesc], fareComponentDescs: List[FareComponentDesc], itineraryGroups: List[ItineraryGroup], legDescs: List[LegDesc], messages: List[Message], scheduleDescs: List[ScheduleDesc], statistics: Statistics, taxDescs: List[TaxDesc], taxSummaryDescs: List[TaxDesc], validatingCarrierDescs: List[ValidatingCarrierDesc], version: str) -> None:
+    def __init__(self, baggageAllowanceDescs: List[BaggageAllowanceDesc], fareComponentDescs: List[FareComponentDesc],
+                 itineraryGroups: List[ItineraryGroup], legDescs: List[LegDesc], messages: List[Message],
+                 scheduleDescs: List[ScheduleDesc], statistics: Statistics, taxDescs: List[TaxDesc],
+                 taxSummaryDescs: List[TaxDesc], validatingCarrierDescs: List[ValidatingCarrierDesc],
+                 version: str) -> None:
         self.baggageAllowanceDescs = baggageAllowanceDescs
         self.fareComponentDescs = fareComponentDescs
         self.itineraryGroups = itineraryGroups
@@ -1390,20 +1430,22 @@ class GroupedItineraryResponse:
         taxSummaryDescs = from_list(TaxDesc.from_dict, obj.get("taxSummaryDescs"))
         validatingCarrierDescs = from_list(ValidatingCarrierDesc.from_dict, obj.get("validatingCarrierDescs"))
         version = from_str(obj.get("version"))
-        return GroupedItineraryResponse(baggageAllowanceDescs, fareComponentDescs, itineraryGroups, legDescs, messages, scheduleDescs, statistics, taxDescs, taxSummaryDescs, validatingCarrierDescs, version)
+        return GroupedItineraryResponse(baggageAllowanceDescs, fareComponentDescs, itineraryGroups, legDescs, messages,
+                                        scheduleDescs, statistics, taxDescs, taxSummaryDescs, validatingCarrierDescs,
+                                        version)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        #result["baggageAllowanceDescs"] = from_list(lambda x: to_class(BaggageAllowanceDesc, x), self.baggageAllowanceDescs)
-        result["fareComponentDescs"] = from_list(lambda x: to_class(FareComponentDesc, x), self.fareComponentDescs)
-        #result["itineraryGroups"] = from_list(lambda x: to_class(ItineraryGroup, x), self.itineraryGroups)
-        #result["legDescs"] = from_list(lambda x: to_class(LegDesc, x), self.legDescs)
+        result["baggageAllowanceDescs"] = from_list(lambda x: to_class(BaggageAllowanceDesc, x), self.baggageAllowanceDescs)
+        # result["fareComponentDescs"] = from_list(lambda x: to_class(FareComponentDesc, x), self.fareComponentDescs)
+        result["itineraryGroups"] = from_list(lambda x: to_class(ItineraryGroup, x), self.itineraryGroups)
+        # result["legDescs"] = from_list(lambda x: to_class(LegDesc, x), self.legDescs)
         result["messages"] = from_list(lambda x: to_class(Message, x), self.messages)
-        result["scheduleDescs"] = from_list(lambda x: to_class(ScheduleDesc, x), self.scheduleDescs)
-        #result["statistics"] = to_class(Statistics, self.statistics)
-        #result["taxDescs"] = from_list(lambda x: to_class(TaxDesc, x), self.taxDescs)
-        #result["taxSummaryDescs"] = from_list(lambda x: to_class(TaxDesc, x), self.taxSummaryDescs)
-        #result["validatingCarrierDescs"] = from_list(lambda x: to_class(ValidatingCarrierDesc, x), self.validatingCarrierDescs)
+        # result["scheduleDescs"] = from_list(lambda x: to_class(ScheduleDesc, x), self.scheduleDescs)
+        # result["statistics"] = to_class(Statistics, self.statistics)
+        # result["taxDescs"] = from_list(lambda x: to_class(TaxDesc, x), self.taxDescs)
+        # result["taxSummaryDescs"] = from_list(lambda x: to_class(TaxDesc, x), self.taxSummaryDescs)
+        # result["validatingCarrierDescs"] = from_list(lambda x: to_class(ValidatingCarrierDesc, x), self.validatingCarrierDescs)
         result["version"] = from_str(self.version)
         return result
 
@@ -1428,6 +1470,7 @@ class Welcome:
     def toJson(self):
         return json.dumps(self, default=lambda o: o.__dict__)
 
+
 def welcome_from_dict(s: Any) -> Welcome:
     return Welcome.from_dict(s)
 
@@ -1448,6 +1491,7 @@ def api_all():
     result = welcome_from_dict(json.loads(r.content))
     employeeJSONData = result.to_dict()
     return employeeJSONData
+
 
 if __name__ == "__main__":
     app.run()
