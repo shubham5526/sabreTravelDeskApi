@@ -1437,15 +1437,15 @@ class GroupedItineraryResponse:
     def to_dict(self) -> dict:
         result: dict = {}
         result["baggageAllowanceDescs"] = from_list(lambda x: to_class(BaggageAllowanceDesc, x), self.baggageAllowanceDescs)
-        # result["fareComponentDescs"] = from_list(lambda x: to_class(FareComponentDesc, x), self.fareComponentDescs)
+        result["fareComponentDescs"] = from_list(lambda x: to_class(FareComponentDesc, x), self.fareComponentDescs)
         result["itineraryGroups"] = from_list(lambda x: to_class(ItineraryGroup, x), self.itineraryGroups)
-        # result["legDescs"] = from_list(lambda x: to_class(LegDesc, x), self.legDescs)
+        result["legDescs"] = from_list(lambda x: to_class(LegDesc, x), self.legDescs)
         result["messages"] = from_list(lambda x: to_class(Message, x), self.messages)
-        # result["scheduleDescs"] = from_list(lambda x: to_class(ScheduleDesc, x), self.scheduleDescs)
-        # result["statistics"] = to_class(Statistics, self.statistics)
-        # result["taxDescs"] = from_list(lambda x: to_class(TaxDesc, x), self.taxDescs)
-        # result["taxSummaryDescs"] = from_list(lambda x: to_class(TaxDesc, x), self.taxSummaryDescs)
-        # result["validatingCarrierDescs"] = from_list(lambda x: to_class(ValidatingCarrierDesc, x), self.validatingCarrierDescs)
+        result["scheduleDescs"] = from_list(lambda x: to_class(ScheduleDesc, x), self.scheduleDescs)
+        result["statistics"] = to_class(Statistics, self.statistics)
+        result["taxDescs"] = from_list(lambda x: to_class(TaxDesc, x), self.taxDescs)
+        result["taxSummaryDescs"] = from_list(lambda x: to_class(TaxDesc, x), self.taxSummaryDescs)
+        result["validatingCarrierDescs"] = from_list(lambda x: to_class(ValidatingCarrierDesc, x), self.validatingCarrierDescs)
         result["version"] = from_str(self.version)
         return result
 
