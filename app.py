@@ -32,7 +32,7 @@ data = {
             {
                 "DepartureDateTime": "2020-06-21T00:00:00",
                 "DestinationLocation": {
-                    "LocationCode": "SFO"
+                    "LocationCode": "DEL"
                 },
                 "OriginLocation": {
                     "LocationCode": "NYC"
@@ -40,12 +40,12 @@ data = {
                 "RPH": "0"
             },
             {
-                "DepartureDateTime": "2020-06-22T00:00:00",
+                "DepartureDateTime": "2020-06-28T00:00:00",
                 "DestinationLocation": {
                     "LocationCode": "NYC"
                 },
                 "OriginLocation": {
-                    "LocationCode": "SFO"
+                    "LocationCode": "DEL"
                 },
                 "RPH": "1"
             }
@@ -188,34 +188,34 @@ class BaggageAllowanceDesc:
         return result
 
 
-class Direction(Enum):
-    WH = "WH"
+#class Direction(Enum):
+#    WH = "WH"
 
 
-class Directionality(Enum):
-    FROM = "FROM"
+#class Directionality(Enum):
+#    FROM = "FROM"
 
 
-class FareCurrency(Enum):
-    USD = "USD"
+#class FareCurrency(Enum):
+#    USD = "USD"
 
 
 class PassengerType(Enum):
     ADT = "ADT"
 
 
-class FareType(Enum):
-    END = "END"
-    EOU = "EOU"
-    SIP = "SIP"
+#class FareType(Enum):
+#    END = "END"
+#    EOU = "EOU"
+#    SIP = "SIP"
 
 
-class GoverningCarrier(Enum):
-    AA = "AA"
-    AS = "AS"
-    B6 = "B6"
-    DL = "DL"
-    UA = "UA"
+#class GoverningCarrier(Enum):
+#    AA = "AA"
+#    AS = "AS"
+#    B6 = "B6"
+#    DL = "DL"
+#    UA = "UA"
 
 
 class PurpleSegment:
@@ -260,17 +260,17 @@ class VendorCode(Enum):
 
 class FareComponentDesc:
     applicablePricingCategories: str
-    direction: Direction
-    directionality: Directionality
+    direction: str
+    directionality: str
     fareAmount: int
     fareBasisCode: str
-    fareCurrency: FareCurrency
+    fareCurrency: str
     farePassengerType: PassengerType
     fareRule: str
     fareTariff: int
-    fareType: FareType
+    fareType: str
     fareTypeBitmap: str
-    governingCarrier: GoverningCarrier
+    governingCarrier: str
     id: int
     notValidAfter: datetime
     oneWayFare: bool
@@ -279,10 +279,10 @@ class FareComponentDesc:
     vendorCode: VendorCode
     notValidBefore: Optional[datetime]
 
-    def __init__(self, applicablePricingCategories: str, direction: Direction, directionality: Directionality,
-                 fareAmount: int, fareBasisCode: str, fareCurrency: FareCurrency, farePassengerType: PassengerType,
-                 fareRule: str, fareTariff: int, fareType: FareType, fareTypeBitmap: str,
-                 governingCarrier: GoverningCarrier, id: int, notValidAfter: datetime, oneWayFare: bool,
+    def __init__(self, applicablePricingCategories: str, direction: str, directionality: str,
+                 fareAmount: int, fareBasisCode: str, fareCurrency: str, farePassengerType: PassengerType,
+                 fareRule: str, fareTariff: int, fareType: str, fareTypeBitmap: str,
+                 governingCarrier: str, id: int, notValidAfter: datetime, oneWayFare: bool,
                  publishedFareAmount: int, segments: List[FareComponentDescSegment], vendorCode: VendorCode,
                  notValidBefore: Optional[datetime]) -> None:
         self.applicablePricingCategories = applicablePricingCategories
@@ -309,24 +309,24 @@ class FareComponentDesc:
     def from_dict(obj: Any) -> 'FareComponentDesc':
         assert isinstance(obj, dict)
         applicablePricingCategories = from_str(obj.get("applicablePricingCategories"))
-        direction = Direction(obj.get("direction"))
-        directionality = Directionality(obj.get("directionality"))
+        direction = obj.get("direction")
+        directionality = obj.get("directionality")
         fareAmount = obj.get("fareAmount")
         fareBasisCode = from_str(obj.get("fareBasisCode"))
-        fareCurrency = FareCurrency(obj.get("fareCurrency"))
+        fareCurrency = (obj.get("fareCurrency"))
         farePassengerType = PassengerType(obj.get("farePassengerType"))
         fareRule = from_str(obj.get("fareRule"))
         fareTariff = int(from_str(obj.get("fareTariff")))
-        fareType = FareType(obj.get("fareType"))
+        fareType = obj.get("fareType")
         fareTypeBitmap = from_str(obj.get("fareTypeBitmap"))
-        governingCarrier = GoverningCarrier(obj.get("governingCarrier"))
+        governingCarrier = obj.get("governingCarrier")
         id = from_int(obj.get("id"))
-        notValidAfter = from_datetime(obj.get("notValidAfter"))
-        oneWayFare = from_bool(obj.get("oneWayFare"))
+        notValidAfter = obj.get("notValidAfter")
+        oneWayFare = obj.get("oneWayFare")
         publishedFareAmount = obj.get("publishedFareAmount")
         segments = from_list(FareComponentDescSegment.from_dict, obj.get("segments"))
         vendorCode = VendorCode(obj.get("vendorCode"))
-        notValidBefore = from_union([from_datetime, from_none], obj.get("notValidBefore"))
+        notValidBefore = obj.get("notValidBefore")
         return FareComponentDesc(applicablePricingCategories, direction, directionality, fareAmount, fareBasisCode,
                                  fareCurrency, farePassengerType, fareRule, fareTariff, fareType, fareTypeBitmap,
                                  governingCarrier, id, notValidAfter, oneWayFare, publishedFareAmount, segments,
@@ -335,24 +335,24 @@ class FareComponentDesc:
     def to_dict(self) -> dict:
         result: dict = {}
         result["applicablePricingCategories"] = from_str(self.applicablePricingCategories)
-        result["direction"] = to_enum(Direction, self.direction)
-        result["directionality"] = to_enum(Directionality, self.directionality)
+        result["direction"] = self.direction
+        result["directionality"] = self.directionality
         result["fareAmount"] = self.fareAmount
         result["fareBasisCode"] = from_str(self.fareBasisCode)
-        result["fareCurrency"] = to_enum(FareCurrency, self.fareCurrency)
+        result["fareCurrency"] = self.fareCurrency
         result["farePassengerType"] = to_enum(PassengerType, self.farePassengerType)
         result["fareRule"] = from_str(self.fareRule)
         result["fareTariff"] = from_str(str(self.fareTariff))
-        result["fareType"] = to_enum(FareType, self.fareType)
+        result["fareType"] = self.fareType
         result["fareTypeBitmap"] = from_str(self.fareTypeBitmap)
-        result["governingCarrier"] = to_enum(GoverningCarrier, self.governingCarrier)
+        result["governingCarrier"] = self.governingCarrier
         result["id"] = from_int(self.id)
-        result["notValidAfter"] = self.notValidAfter.isoformat()
-        result["oneWayFare"] = from_bool(self.oneWayFare)
+        result["notValidAfter"] = self.notValidAfter
+        result["oneWayFare"] = self.oneWayFare
         result["publishedFareAmount"] = self.publishedFareAmount
         result["segments"] = from_list(lambda x: to_class(FareComponentDescSegment, x), self.segments)
         result["vendorCode"] = to_enum(VendorCode, self.vendorCode)
-        result["notValidBefore"] = from_union([lambda x: x.isoformat(), from_none], self.notValidBefore)
+        result["notValidBefore"] = self.notValidBefore
         return result
 
 
@@ -379,14 +379,14 @@ class LegDescription:
     def from_dict(obj: Any) -> 'LegDescription':
         assert isinstance(obj, dict)
         arrivalLocation = obj.get("arrivalLocation")
-        departureDate = from_datetime(obj.get("departureDate"))
+        departureDate = obj.get("departureDate")
         departureLocation = obj.get("departureLocation")
         return LegDescription(arrivalLocation, departureDate, departureLocation)
 
     def to_dict(self) -> dict:
         result: dict = {}
         result["arrivalLocation"] = self.arrivalLocation
-        result["departureDate"] = self.departureDate.isoformat()
+        result["departureDate"] = self.departureDate
         result["departureLocation"] = self.departureLocation
         return result
 
@@ -480,12 +480,12 @@ class BaggageInformationSegment:
 
 
 class BaggageInformation:
-    airlineCode: GoverningCarrier
+    airlineCode: str
     allowance: Schedule
     provisionType: str
     segments: List[BaggageInformationSegment]
 
-    def __init__(self, airlineCode: GoverningCarrier, allowance: Schedule, provisionType: str,
+    def __init__(self, airlineCode: str, allowance: Schedule, provisionType: str,
                  segments: List[BaggageInformationSegment]) -> None:
         self.airlineCode = airlineCode
         self.allowance = allowance
@@ -495,7 +495,7 @@ class BaggageInformation:
     @staticmethod
     def from_dict(obj: Any) -> 'BaggageInformation':
         assert isinstance(obj, dict)
-        airlineCode = GoverningCarrier(obj.get("airlineCode"))
+        airlineCode = obj.get("airlineCode")
         allowance = Schedule.from_dict(obj.get("allowance"))
         provisionType = obj.get("provisionType")
         segments = from_list(BaggageInformationSegment.from_dict, obj.get("segments"))
@@ -503,7 +503,7 @@ class BaggageInformation:
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["airlineCode"] = to_enum(GoverningCarrier, self.airlineCode)
+        result["airlineCode"] = self.airlineCode
         result["allowance"] = to_class(Schedule, self.allowance)
         result["provisionType"] = self.provisionType
         result["segments"] = from_list(lambda x: to_class(BaggageInformationSegment, x), self.segments)
@@ -512,10 +512,10 @@ class BaggageInformation:
 
 class CurrencyConversion:
     exchangeRateUsed: int
-    currencyConversion_from: FareCurrency
-    to: FareCurrency
+    currencyConversion_from: str
+    to: str
 
-    def __init__(self, exchangeRateUsed: int, currencyConversion_from: FareCurrency, to: FareCurrency) -> None:
+    def __init__(self, exchangeRateUsed: int, currencyConversion_from: str, to: str) -> None:
         self.exchangeRateUsed = exchangeRateUsed
         self.currencyConversion_from = currencyConversion_from
         self.to = to
@@ -524,15 +524,15 @@ class CurrencyConversion:
     def from_dict(obj: Any) -> 'CurrencyConversion':
         assert isinstance(obj, dict)
         exchangeRateUsed = obj.get("exchangeRateUsed")
-        currencyConversion_from = FareCurrency(obj.get("from"))
-        to = FareCurrency(obj.get("to"))
+        currencyConversion_from = (obj.get("from"))
+        to = (obj.get("to"))
         return CurrencyConversion(exchangeRateUsed, currencyConversion_from, to)
 
     def to_dict(self) -> dict:
         result: dict = {}
         result["exchangeRateUsed"] = self.exchangeRateUsed
-        result["from"] = to_enum(FareCurrency, self.currencyConversion_from)
-        result["to"] = to_enum(FareCurrency, self.to)
+        result["from"] = self.currencyConversion_from
+        result["to"] = self.to
         return result
 
 
@@ -547,25 +547,25 @@ class DotRating(Enum):
     X = "X"
 
 
-class CabinCode(Enum):
-    Y = "Y"
+#class CabinCode(Enum):
+#    Y = "Y"
 
 
-class MealCode(Enum):
-    F = "F"
-    G = "G"
-    S = "S"
+#class MealCode(Enum):
+#    F = "F"
+#    G = "G"
+#    S = "S"
 
 
 class FluffySegment:
     availabilityBreak: Optional[bool]
     bookingCode: DotRating
-    cabinCode: CabinCode
-    mealCode: Optional[MealCode]
+    cabinCode: str
+    mealCode: Optional[str]
     seatsAvailable: int
 
-    def __init__(self, availabilityBreak: Optional[bool], bookingCode: DotRating, cabinCode: CabinCode,
-                 mealCode: Optional[MealCode], seatsAvailable: int) -> None:
+    def __init__(self, availabilityBreak: Optional[bool], bookingCode: DotRating, cabinCode: str,
+                 mealCode: Optional[str], seatsAvailable: int) -> None:
         self.availabilityBreak = availabilityBreak
         self.bookingCode = bookingCode
         self.cabinCode = cabinCode
@@ -577,8 +577,8 @@ class FluffySegment:
         assert isinstance(obj, dict)
         availabilityBreak = from_union([from_bool, from_none], obj.get("availabilityBreak"))
         bookingCode = obj.get("bookingCode")
-        cabinCode = CabinCode(obj.get("cabinCode"))
-        mealCode = from_union([MealCode, from_none], obj.get("mealCode"))
+        cabinCode = (obj.get("cabinCode"))
+        mealCode = obj.get("mealCode")
         seatsAvailable = from_int(obj.get("seatsAvailable"))
         return FluffySegment(availabilityBreak, bookingCode, cabinCode, mealCode, seatsAvailable)
 
@@ -586,8 +586,8 @@ class FluffySegment:
         result: dict = {}
         result["availabilityBreak"] = from_union([from_bool, from_none], self.availabilityBreak)
         result["bookingCode"] = self.bookingCode
-        result["cabinCode"] = to_enum(CabinCode, self.cabinCode)
-        result["mealCode"] = from_union([lambda x: to_enum(MealCode, x), from_none], self.mealCode)
+        result["cabinCode"] = self.cabinCode
+        result["mealCode"] = self.mealCode
         result["seatsAvailable"] = from_int(self.seatsAvailable)
         return result
 
@@ -654,12 +654,12 @@ class TypeForFirstLegEnum(Enum):
 
 
 class FareMessage:
-    carrier: Optional[GoverningCarrier]
+    carrier: str
     code: int
     info: Info
     type: TypeForFirstLegEnum
 
-    def __init__(self, carrier: Optional[GoverningCarrier], code: int, info: Info, type: TypeForFirstLegEnum) -> None:
+    def __init__(self, carrier: str, code: int, info: Info, type: TypeForFirstLegEnum) -> None:
         self.carrier = carrier
         self.code = code
         self.info = info
@@ -668,7 +668,7 @@ class FareMessage:
     @staticmethod
     def from_dict(obj: Any) -> 'FareMessage':
         assert isinstance(obj, dict)
-        carrier = from_union([GoverningCarrier, from_none], obj.get("carrier"))
+        carrier = obj.get("carrier")
         code = int(from_str(obj.get("code")))
         info = obj.get("info")
         type = TypeForFirstLegEnum(obj.get("type"))
@@ -676,7 +676,7 @@ class FareMessage:
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["carrier"] = from_union([lambda x: to_enum(GoverningCarrier, x), from_none], self.carrier)
+        result["carrier"] = self.carrier
         result["code"] = from_str(str(self.code))
         result["info"] = self.info
         result["type"] = to_enum(TypeForFirstLegEnum, self.type)
@@ -685,21 +685,21 @@ class FareMessage:
 
 class PassengerTotalFare:
     baseFareAmount: int
-    baseFareCurrency: FareCurrency
+    baseFareCurrency: str
     commissionAmount: int
     commissionPercentage: int
     constructionAmount: int
-    constructionCurrency: FareCurrency
-    currency: FareCurrency
+    constructionCurrency: str
+    currency: str
     equivalentAmount: int
-    equivalentCurrency: FareCurrency
+    equivalentCurrency: str
     exchangeRateOne: int
     totalFare: float
     totalTaxAmount: float
 
-    def __init__(self, baseFareAmount: int, baseFareCurrency: FareCurrency, commissionAmount: int,
-                 commissionPercentage: int, constructionAmount: int, constructionCurrency: FareCurrency,
-                 currency: FareCurrency, equivalentAmount: int, equivalentCurrency: FareCurrency, exchangeRateOne: int,
+    def __init__(self, baseFareAmount: int, baseFareCurrency: str, commissionAmount: int,
+                 commissionPercentage: int, constructionAmount: int, constructionCurrency: str,
+                 currency: str, equivalentAmount: int, equivalentCurrency: str, exchangeRateOne: int,
                  totalFare: float, totalTaxAmount: float) -> None:
         self.baseFareAmount = baseFareAmount
         self.baseFareCurrency = baseFareCurrency
@@ -718,14 +718,14 @@ class PassengerTotalFare:
     def from_dict(obj: Any) -> 'PassengerTotalFare':
         assert isinstance(obj, dict)
         baseFareAmount = obj.get("baseFareAmount")
-        baseFareCurrency = FareCurrency(obj.get("baseFareCurrency"))
+        baseFareCurrency = obj.get("baseFareCurrency")
         commissionAmount = obj.get("commissionAmount")
         commissionPercentage = obj.get("commissionPercentage")
         constructionAmount = obj.get("constructionAmount")
-        constructionCurrency = FareCurrency(obj.get("constructionCurrency"))
-        currency = FareCurrency(obj.get("currency"))
+        constructionCurrency = obj.get("constructionCurrency")
+        currency = obj.get("currency")
         equivalentAmount = obj.get("equivalentAmount")
-        equivalentCurrency = FareCurrency(obj.get("equivalentCurrency"))
+        equivalentCurrency = obj.get("equivalentCurrency")
         exchangeRateOne = obj.get("exchangeRateOne")
         totalFare = from_float(obj.get("totalFare"))
         totalTaxAmount = from_float(obj.get("totalTaxAmount"))
@@ -736,14 +736,14 @@ class PassengerTotalFare:
     def to_dict(self) -> dict:
         result: dict = {}
         result["baseFareAmount"] = self.baseFareAmount
-        result["baseFareCurrency"] = to_enum(FareCurrency, self.baseFareCurrency)
+        result["baseFareCurrency"] = self.baseFareCurrency
         result["commissionAmount"] = from_int(self.commissionAmount)
         result["commissionPercentage"] = from_int(self.commissionPercentage)
         result["constructionAmount"] = from_int(self.constructionAmount)
-        result["constructionCurrency"] = to_enum(FareCurrency, self.constructionCurrency)
-        result["currency"] = to_enum(FareCurrency, self.currency)
+        result["constructionCurrency"] = self.constructionCurrency
+        result["currency"] = self.currency
         result["equivalentAmount"] = from_int(self.equivalentAmount)
-        result["equivalentCurrency"] = to_enum(FareCurrency, self.equivalentCurrency)
+        result["equivalentCurrency"] = self.equivalentCurrency
         result["exchangeRateOne"] = from_int(self.exchangeRateOne)
         result["totalFare"] = to_float(self.totalFare)
         result["totalTaxAmount"] = to_float(self.totalTaxAmount)
@@ -828,16 +828,16 @@ class PassengerInfoList:
 
 class TotalFare:
     baseFareAmount: int
-    baseFareCurrency: FareCurrency
+    baseFareCurrency: str
     constructionAmount: int
-    constructionCurrency: FareCurrency
-    currency: FareCurrency
-    equivalentCurrency: FareCurrency
+    constructionCurrency: str
+    currency: str
+    equivalentCurrency: str
     totalPrice: float
     totalTaxAmount: float
 
-    def __init__(self, baseFareAmount: int, baseFareCurrency: FareCurrency, constructionAmount: int,
-                 constructionCurrency: FareCurrency, currency: FareCurrency, equivalentCurrency: FareCurrency,
+    def __init__(self, baseFareAmount: int, baseFareCurrency: str, constructionAmount: int,
+                 constructionCurrency: str, currency: str, equivalentCurrency: str,
                  totalPrice: float, totalTaxAmount: float) -> None:
         self.baseFareAmount = baseFareAmount
         self.baseFareCurrency = baseFareCurrency
@@ -852,11 +852,11 @@ class TotalFare:
     def from_dict(obj: Any) -> 'TotalFare':
         assert isinstance(obj, dict)
         baseFareAmount = obj.get("baseFareAmount")
-        baseFareCurrency = FareCurrency(obj.get("baseFareCurrency"))
+        baseFareCurrency = (obj.get("baseFareCurrency"))
         constructionAmount = obj.get("constructionAmount")
-        constructionCurrency = FareCurrency(obj.get("constructionCurrency"))
-        currency = FareCurrency(obj.get("currency"))
-        equivalentCurrency = FareCurrency(obj.get("equivalentCurrency"))
+        constructionCurrency = (obj.get("constructionCurrency"))
+        currency = (obj.get("currency"))
+        equivalentCurrency = (obj.get("equivalentCurrency"))
         totalPrice = from_float(obj.get("totalPrice"))
         totalTaxAmount = from_float(obj.get("totalTaxAmount"))
         return TotalFare(baseFareAmount, baseFareCurrency, constructionAmount, constructionCurrency, currency,
@@ -865,11 +865,11 @@ class TotalFare:
     def to_dict(self) -> dict:
         result: dict = {}
         result["baseFareAmount"] = from_int(self.baseFareAmount)
-        result["baseFareCurrency"] = to_enum(FareCurrency, self.baseFareCurrency)
+        result["baseFareCurrency"] = self.baseFareCurrency
         result["constructionAmount"] = from_int(self.constructionAmount)
-        result["constructionCurrency"] = to_enum(FareCurrency, self.constructionCurrency)
-        result["currency"] = to_enum(FareCurrency, self.currency)
-        result["equivalentCurrency"] = to_enum(FareCurrency, self.equivalentCurrency)
+        result["constructionCurrency"] = self.constructionCurrency
+        result["currency"] = self.currency
+        result["equivalentCurrency"] = self.equivalentCurrency
         result["totalPrice"] = to_float(self.totalPrice)
         result["totalTaxAmount"] = to_float(self.totalTaxAmount)
         return result
@@ -881,13 +881,13 @@ class Fare:
     lastTicketDate: datetime
     passengerInfoList: List[PassengerInfoList]
     totalFare: TotalFare
-    validatingCarrierCode: GoverningCarrier
+    validatingCarrierCode: str
     validatingCarriers: List[Schedule]
     vita: bool
 
     def __init__(self, eTicketable: bool, governingCarriers: str, lastTicketDate: datetime,
                  passengerInfoList: List[PassengerInfoList], totalFare: TotalFare,
-                 validatingCarrierCode: GoverningCarrier, validatingCarriers: List[Schedule], vita: bool) -> None:
+                 validatingCarrierCode: str, validatingCarriers: List[Schedule], vita: bool) -> None:
         self.eTicketable = eTicketable
         self.governingCarriers = governingCarriers
         self.lastTicketDate = lastTicketDate
@@ -902,10 +902,10 @@ class Fare:
         assert isinstance(obj, dict)
         eTicketable = from_bool(obj.get("eTicketable"))
         governingCarriers = obj.get("governingCarriers")
-        lastTicketDate = from_datetime(obj.get("lastTicketDate"))
+        lastTicketDate = obj.get("lastTicketDate")
         passengerInfoList = from_list(PassengerInfoList.from_dict, obj.get("passengerInfoList"))
         totalFare = TotalFare.from_dict(obj.get("totalFare"))
-        validatingCarrierCode = GoverningCarrier(obj.get("validatingCarrierCode"))
+        validatingCarrierCode = obj.get("validatingCarrierCode")
         validatingCarriers = from_list(Schedule.from_dict, obj.get("validatingCarriers"))
         vita = from_bool(obj.get("vita"))
         return Fare(eTicketable, governingCarriers, lastTicketDate, passengerInfoList, totalFare, validatingCarrierCode,
@@ -915,10 +915,10 @@ class Fare:
         result: dict = {}
         result["eTicketable"] = from_bool(self.eTicketable)
         result["governingCarriers"] = self.governingCarriers
-        result["lastTicketDate"] = self.lastTicketDate.isoformat()
+        result["lastTicketDate"] = self.lastTicketDate
         result["passengerInfoList"] = from_list(lambda x: to_class(PassengerInfoList, x), self.passengerInfoList)
         result["totalFare"] = to_class(TotalFare, self.totalFare)
-        result["validatingCarrierCode"] = to_enum(GoverningCarrier, self.validatingCarrierCode)
+        result["validatingCarrierCode"] = self.validatingCarrierCode
         result["validatingCarriers"] = from_list(lambda x: to_class(Schedule, x), self.validatingCarriers)
         result["vita"] = from_bool(self.vita)
         return result
@@ -1063,35 +1063,36 @@ class Message:
         return result
 
 
-class City(Enum):
-    DTT = "DTT"
-    PHX = "PHX"
-    QYC = "QYC"
-    SFO = "SFO"
+#class City(Enum):
+#    DTT = "DTT"
+#    PHX = "PHX"
+#    QYC = "QYC"
+#    SFO = "SFO"
 
 
-class Country(Enum):
-    US = "US"
+#class Country(Enum):
+#    US = "US"
 
 
-class State(Enum):
-    AZ = "AZ"
-    CA = "CA"
-    MI = "MI"
-    NJ = "NJ"
-    NY = "NY"
+#class State(Enum):
+#    AZ = "AZ"
+#    CA = "CA"
+#    MI = "MI"
+#    NJ = "NJ"
+#    NY = "NY"
 
 
 class Arrival:
     airport: str
-    city: City
-    country: Country
+    city: str
+    country: str
     dateAdjustment: Optional[int]
-    state: State
+    state: str
     terminal: str
     time: datetime
 
-    def __init__(self, airport: str, city: City, country: Country, dateAdjustment: Optional[int], state: State,
+    def __init__(self, airport: str, city: str, country: str, dateAdjustment: Optional[int], state: str
+                 ,
                  terminal: str, time: datetime) -> None:
         self.airport = airport
         self.city = city
@@ -1106,22 +1107,22 @@ class Arrival:
         assert isinstance(obj, dict)
         airport = obj.get("airport")
         city = obj.get("city")
-        country = Country(obj.get("country"))
+        country = obj.get("country")
         dateAdjustment = from_union([from_int, from_none], obj.get("dateAdjustment"))
         state = obj.get("state")
         terminal = obj.get("terminal")
-        time = from_datetime(obj.get("time"))
+        time = obj.get("time")
         return Arrival(airport, city, country, dateAdjustment, state, terminal, time)
 
     def to_dict(self) -> dict:
         result: dict = {}
         result["airport"] = self.airport
         result["city"] = self.city
-        result["country"] = to_enum(Country, self.country)
+        result["country"] =  self.country
         result["dateAdjustment"] = from_union([from_int, from_none], self.dateAdjustment)
         result["state"] = self.state
         result["terminal"] = self.terminal
-        result["strtime"] = self.time.isoformat()
+        result["strtime"] = self.time
         return result
 
 
@@ -1153,14 +1154,14 @@ class Equipment:
 
 class Carrier:
     equipment: Equipment
-    marketing: GoverningCarrier
+    marketing: str
     marketingFlightNumber: int
-    operating: GoverningCarrier
+    operating: str
     operatingFlightNumber: int
     alliances: Optional[str]
 
-    def __init__(self, equipment: Equipment, marketing: GoverningCarrier, marketingFlightNumber: int,
-                 operating: GoverningCarrier, operatingFlightNumber: int, alliances: Optional[str]) -> None:
+    def __init__(self, equipment: Equipment, marketing: str, marketingFlightNumber: int,
+                 operating: str, operatingFlightNumber: int, alliances: Optional[str]) -> None:
         self.equipment = equipment
         self.marketing = marketing
         self.marketingFlightNumber = marketingFlightNumber
@@ -1172,9 +1173,9 @@ class Carrier:
     def from_dict(obj: Any) -> 'Carrier':
         assert isinstance(obj, dict)
         equipment = Equipment.from_dict(obj.get("equipment"))
-        marketing = GoverningCarrier(obj.get("marketing"))
+        marketing = obj.get("marketing")
         marketingFlightNumber = from_int(obj.get("marketingFlightNumber"))
-        operating = GoverningCarrier(obj.get("operating"))
+        operating = obj.get("operating")
         operatingFlightNumber = from_int(obj.get("operatingFlightNumber"))
         alliances = from_union([from_str, from_none], obj.get("alliances"))
         return Carrier(equipment, marketing, marketingFlightNumber, operating, operatingFlightNumber, alliances)
@@ -1182,9 +1183,9 @@ class Carrier:
     def to_dict(self) -> dict:
         result: dict = {}
         result["equipment"] = to_class(Equipment, self.equipment)
-        result["marketing"] = to_enum(GoverningCarrier, self.marketing)
+        result["marketing"] = self.marketing
         result["marketingFlightNumber"] = from_int(self.marketingFlightNumber)
-        result["operating"] = to_enum(GoverningCarrier, self.operating)
+        result["operating"] = self.operating
         result["operatingFlightNumber"] = from_int(self.operatingFlightNumber)
         result["alliances"] = from_union([from_str, from_none], self.alliances)
         return result
@@ -1270,30 +1271,30 @@ class Statistics:
         return result
 
 
-class Code(Enum):
-    AY = "AY"
-    XF = "XF"
+#class Code(Enum):
+#    AY = "AY"
+#    XF = "XF"
 
 
-class Description(Enum):
-    PASSENGER_CIVIL_AVIATION_SECURITY_SERVICE_FEE = "PASSENGER CIVIL AVIATION SECURITY SERVICE FEE"
-    PASSENGER_FACILITY_CHARGE = "PASSENGER FACILITY CHARGE"
-    PASSENGER_FACILITY_CHARGES = "PASSENGER FACILITY CHARGES"
+#class Description(Enum):
+#    PASSENGER_CIVIL_AVIATION_SECURITY_SERVICE_FEE = "PASSENGER CIVIL AVIATION SECURITY SERVICE FEE"
+#    PASSENGER_FACILITY_CHARGE = "PASSENGER FACILITY CHARGE"
+#    PASSENGER_FACILITY_CHARGES = "PASSENGER FACILITY CHARGES"
 
 
 class TaxDesc:
     amount: float
-    code: Code
-    country: Country
-    currency: FareCurrency
-    description: Description
+    code: str
+    country: str
+    currency: str
+    description: str
     id: int
     publishedAmount: float
-    publishedCurrency: FareCurrency
+    publishedCurrency: str
     station: str
 
-    def __init__(self, amount: float, code: Code, country: Country, currency: FareCurrency, description: Description,
-                 id: int, publishedAmount: float, publishedCurrency: FareCurrency, station: str) -> None:
+    def __init__(self, amount: float, code: str, country: str, currency: str, description: str,
+                 id: int, publishedAmount: float, publishedCurrency: str, station: str) -> None:
         self.amount = amount
         self.code = code
         self.country = country
@@ -1308,45 +1309,45 @@ class TaxDesc:
     def from_dict(obj: Any) -> 'TaxDesc':
         assert isinstance(obj, dict)
         amount = from_float(obj.get("amount"))
-        code = Code(obj.get("code"))
-        country = Country(obj.get("country"))
-        currency = FareCurrency(obj.get("currency"))
-        description = Description(obj.get("description"))
+        code = (obj.get("code"))
+        country = (obj.get("country"))
+        currency = (obj.get("currency"))
+        description = (obj.get("description"))
         id = from_int(obj.get("id"))
         publishedAmount = from_float(obj.get("publishedAmount"))
-        publishedCurrency = FareCurrency(obj.get("publishedCurrency"))
+        publishedCurrency = (obj.get("publishedCurrency"))
         station = obj.get("station")
         return TaxDesc(amount, code, country, currency, description, id, publishedAmount, publishedCurrency, station)
 
     def to_dict(self) -> dict:
         result: dict = {}
         result["amount"] = to_float(self.amount)
-        result["code"] = to_enum(Code, self.code)
-        result["country"] = to_enum(Country, self.country)
-        result["currency"] = to_enum(FareCurrency, self.currency)
-        result["description"] = to_enum(Description, self.description)
+        result["code"] = self.code
+        result["country"] = self.country
+        result["currency"] = self.currency
+        result["description"] = self.description
         result["id"] = from_int(self.id)
         result["publishedAmount"] = to_float(self.publishedAmount)
-        result["publishedCurrency"] = to_enum(FareCurrency, self.publishedCurrency)
+        result["publishedCurrency"] = self.publishedCurrency
         result["station"] = self.station
         return result
 
 
 class Default:
-    code: GoverningCarrier
+    code: str
 
-    def __init__(self, code: GoverningCarrier) -> None:
+    def __init__(self, code: str) -> None:
         self.code = code
 
     @staticmethod
     def from_dict(obj: Any) -> 'Default':
         assert isinstance(obj, dict)
-        code = GoverningCarrier(obj.get("code"))
+        code = obj.get("code")
         return Default(code)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["code"] = to_enum(GoverningCarrier, self.code)
+        result["code"] = self.code
         return result
 
 
