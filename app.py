@@ -19,7 +19,7 @@ from enum import Enum
 from datetime import datetime
 import dateutil.parser
 
-app = flask.Flask(__name__)
+app = flask.Flask(__name__) 
 app.config["DEBUG"] = True
 
 API_ENDPOINT = "https://api-crt.cert.havail.sabre.com/v1/offers/shop"
