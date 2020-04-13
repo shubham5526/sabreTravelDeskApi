@@ -19,7 +19,7 @@ from enum import Enum
 from datetime import datetime
 import dateutil.parser
 
-app = flask.Flask(__name__) 
+app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
 API_ENDPOINT = "https://api-crt.cert.havail.sabre.com/v1/offers/shop"
@@ -227,8 +227,9 @@ class PurpleSegment:
     @staticmethod
     def from_dict(obj: Any) -> 'PurpleSegment':
         #assert isinstance(obj, dict)
-        stopover = false #obj.get("stopover")
+        stopover = from_union([from_bool, from_none], obj.get("stopover"))
         return PurpleSegment(stopover)
+
 
     def to_dict(self) -> dict:
         result: dict = {}
