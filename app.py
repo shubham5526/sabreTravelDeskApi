@@ -55,9 +55,9 @@ data = {
                     "LocationCode": "SFO"
                 },
                 "OriginLocation": {
-                    "LocationCode": "BOM"
+                    "LocationCode": "NYC"
                 },
-                "RPH": "1"
+                "RPH": "2"
             }
         ],
         "POS": {
@@ -88,7 +88,7 @@ data = {
                     "LCC": "Disable",
                     "NDC": "Disable"
                 },
-                "NumTrips": {"Number":3}
+                "NumTrips": {"Number":300}
             }
         },
         "TravelerInfoSummary": {
