@@ -52,10 +52,10 @@ data = {
             {
                 "DepartureDateTime": "2020-06-30T00:00:00",
                 "DestinationLocation": {
-                    "LocationCode": "NYC"
+                    "LocationCode": "SFO"
                 },
                 "OriginLocation": {
-                    "LocationCode": "SFO"
+                    "LocationCode": "NYC"
                 },
                 "RPH": "2"
             }
