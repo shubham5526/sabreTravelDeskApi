@@ -237,7 +237,7 @@ class PurpleSegment:
     @staticmethod
     def from_dict(obj: Any) -> 'PurpleSegment':
         #assert isinstance(obj, dict)
-        stopover = from_union([from_bool, from_none], obj.get("stopover"))
+        stopover = obj.get("stopover")
         return PurpleSegment(stopover)
 
     def to_dict(self) -> dict:
