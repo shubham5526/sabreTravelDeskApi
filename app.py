@@ -88,7 +88,7 @@ data = {
                     "LCC": "Disable",
                     "NDC": "Disable"
                 },
-                "NumTrips": {"Number":300}
+                "NumTrips": {}
             }
         },
         "TravelerInfoSummary": {
