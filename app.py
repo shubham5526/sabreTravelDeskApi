@@ -48,16 +48,6 @@ data = {
                     "LocationCode": "DEL"
                 },
                 "RPH": "1"
-            },
-            {
-                "DepartureDateTime": "2020-06-29T00:00:00",
-                "DestinationLocation": {
-                    "LocationCode": "SFO"
-                },
-                "OriginLocation": {
-                    "LocationCode": "NYC"
-                },
-                "RPH": "2"
             }
         ],
         "POS": {
@@ -88,7 +78,7 @@ data = {
                     "LCC": "Disable",
                     "NDC": "Disable"
                 },
-                "NumTrips": {"Number":20000000}
+                "NumTrips": {}
             }
         },
         "TravelerInfoSummary": {
