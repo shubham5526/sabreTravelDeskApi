@@ -57,7 +57,7 @@ data = {
                 "OriginLocation": {
                     "LocationCode": "BOM"
                 },
-                "RPH": "2"
+                "RPH": "1"
             }
         ],
         "POS": {
