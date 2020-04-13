@@ -48,6 +48,16 @@ data = {
                     "LocationCode": "DEL"
                 },
                 "RPH": "1"
+            },
+            {
+                "DepartureDateTime": "2020-06-30T00:00:00",
+                "DestinationLocation": {
+                    "LocationCode": "NYC"
+                },
+                "OriginLocation": {
+                    "LocationCode": "SFO"
+                },
+                "RPH": "2"
             }
         ],
         "POS": {
