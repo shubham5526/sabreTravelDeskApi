@@ -55,7 +55,7 @@ data = {
                     "LocationCode": "SFO"
                 },
                 "OriginLocation": {
-                    "LocationCode": "NYC"
+                    "LocationCode": "BOM"
                 },
                 "RPH": "2"
             }
