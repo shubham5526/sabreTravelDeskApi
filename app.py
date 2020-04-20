@@ -22,7 +22,7 @@ import dateutil.parser
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
-
+ 
 API_ENDPOINT = "https://api-crt.cert.havail.sabre.com/v1/offers/shop"
 
 API_KEY = "T1RLAQIMUyd8reWF7jUJHFt2mj128VYXvxApdjqDa0YvAZEwM+fKAxxjAACwlGaYuJAk2p7KlimiWuPwIMcveOMGkyUzfSCQgfEmXrkYrMGE/3aan+xj3BcY9TQg2/fD4dsopIDXtbYyFFKI7RV7fbTlfc8e3dlttqietaGet6KfyYQjye2Lw6nRr2xTP+PNNjSJLMOl8lPYeq7TpBcQIFtStmeCGZLmT6g5sUhqiykssrsMV4c+vORqr8VNkfoMkxx6IZqN90CNeYjgqNimdoB+O2GfTIG7JtxoN4c*"
