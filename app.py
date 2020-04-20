@@ -2,6 +2,7 @@ import flask
 from flask import request, jsonify
 import requests
 import json
+import time
 # This code parses date/times, so please
 #
 #     pip install python-dateutil
@@ -16,7 +17,7 @@ import json
 
 from typing import Any, Optional, List, Union, TypeVar, Type, cast, Callable
 from enum import Enum
-from datetime import datetime
+from datetime import datetime, timedelta
 import dateutil.parser
 
 app = flask.Flask(__name__)
@@ -88,7 +89,7 @@ data = {
                     "LCC": "Disable",
                     "NDC": "Disable"
                 },
-                "NumTrips": {}
+                "NumTrips": {"Number": 300}
             }
         },
         "TravelerInfoSummary": {
@@ -198,15 +199,15 @@ class BaggageAllowanceDesc:
         return result
 
 
-#class Direction(Enum):
+# class Direction(Enum):
 #    WH = "WH"
 
 
-#class Directionality(Enum):
+# class Directionality(Enum):
 #    FROM = "FROM"
 
 
-#class FareCurrency(Enum):
+# class FareCurrency(Enum):
 #    USD = "USD"
 
 
@@ -214,13 +215,13 @@ class PassengerType(Enum):
     ADT = "ADT"
 
 
-#class FareType(Enum):
+# class FareType(Enum):
 #    END = "END"
 #    EOU = "EOU"
 #    SIP = "SIP"
 
 
-#class GoverningCarrier(Enum):
+# class GoverningCarrier(Enum):
 #    AA = "AA"
 #    AS = "AS"
 #    B6 = "B6"
@@ -236,10 +237,9 @@ class PurpleSegment:
 
     @staticmethod
     def from_dict(obj: Any) -> 'PurpleSegment':
-        #assert isinstance(obj, dict)
+        # assert isinstance(obj, dict)
         stopover = from_union([from_bool, from_none], obj.get("stopover"))
         return PurpleSegment(stopover)
-
 
     def to_dict(self) -> dict:
         result: dict = {}
@@ -456,7 +456,7 @@ class Schedule:
         return result
 
 
-#class GoverningCarriers(Enum):
+# class GoverningCarriers(Enum):
 #    AA_AA = "AA AA"
 #    AS_AS = "AS AS"
 #    B6_B6 = "B6 B6"
@@ -465,7 +465,7 @@ class Schedule:
 #    UA_UA = "UA UA"
 
 
-#class TerminalEnum(Enum):
+# class TerminalEnum(Enum):
 #    A = "A"
 #    B = "B"
 #    C = "C"
@@ -558,11 +558,11 @@ class DotRating(Enum):
     X = "X"
 
 
-#class CabinCode(Enum):
+# class CabinCode(Enum):
 #    Y = "Y"
 
 
-#class MealCode(Enum):
+# class MealCode(Enum):
 #    F = "F"
 #    G = "G"
 #    S = "S"
@@ -1074,18 +1074,18 @@ class Message:
         return result
 
 
-#class City(Enum):
+# class City(Enum):
 #    DTT = "DTT"
 #    PHX = "PHX"
 #    QYC = "QYC"
 #    SFO = "SFO"
 
 
-#class Country(Enum):
+# class Country(Enum):
 #    US = "US"
 
 
-#class State(Enum):
+# class State(Enum):
 #    AZ = "AZ"
 #    CA = "CA"
 #    MI = "MI"
@@ -1113,6 +1113,47 @@ class Arrival:
         self.terminal = terminal
         self.time = time
 
+    def convert12(self, strTime):
+
+        # Get Hours
+        h1 = ord(strTime[0]) - ord('0');
+        h2 = ord(strTime[1]) - ord('0');
+        convertedtime: str = '';
+        hh = h1 * 10 + h2;
+
+        # Finding out the Meridien of time
+        # ie. AM or PM
+        Meridien = "";
+        if (hh < 12):
+            Meridien = "AM";
+        else:
+            Meridien = "PM";
+
+        hh %= 12;
+
+        # Handle 00 and 12 case separately
+        if (hh == 0):
+            print("12", end="");
+            convertedtime = convertedtime + "12";
+
+            # Printing minutes and seconds
+            for i in range(2, 8):
+                convertedtime = convertedtime + strTime[i];
+                print(strTime[i], end="");
+
+        else:
+            print(hh, end="");
+            convertedtime = convertedtime + str(hh);
+
+            # Printing minutes and seconds
+            for i in range(2, 8):
+                convertedtime = convertedtime + strTime[i];
+                print(strTime[i], end="");
+        print(" " + Meridien);
+        convertedtime = convertedtime + " " + Meridien;
+        print("convertedtime" + convertedtime);
+        return convertedtime;
+
     @staticmethod
     def from_dict(obj: Any) -> 'Arrival':
         assert isinstance(obj, dict)
@@ -1129,11 +1170,25 @@ class Arrival:
         result: dict = {}
         result["airport"] = self.airport
         result["city"] = self.city
-        result["country"] =  self.country
+        result["country"] = self.country
         result["dateAdjustment"] = from_union([from_int, from_none], self.dateAdjustment)
         result["state"] = self.state
         result["terminal"] = self.terminal
-        result["strtime"] = self.time
+        if '-' in self.time:
+            print(int("-"+self.time.split("-")[1].split(":")[0]));
+            timeValue = datetime.strptime(self.time.split("-")[0], '%H:%M:%S') + timedelta(hours=int("-"+self.time.split("-")[1].split(":")[0]),minutes=int("-"+self.time.split("-")[1].split(":")[1]))
+            print(self.convert12(str(timeValue.time())));
+            result["strtime"] = self.convert12(str(timeValue.time()))
+        else:
+            timeValue = datetime.strptime(self.time.split("+")[0], '%H:%M:%S') + timedelta(hours=int(self.time.split("+")[1].split(":")[0]),minutes=int(self.time.split("+")[1].split(":")[1]))
+            print(self.convert12(str(timeValue.time())));
+                #str(self.time.split("+")[0])
+            result["strtime"] = self.convert12(str(timeValue.time()))
+        if '-' in self.time:
+            result["strtime24hr"] = self.time.split("-")[0]
+        else:
+            result["strtime24hr"] = self.time.split("+")[0]
+
         return result
 
 
@@ -1282,12 +1337,12 @@ class Statistics:
         return result
 
 
-#class Code(Enum):
+# class Code(Enum):
 #    AY = "AY"
 #    XF = "XF"
 
 
-#class Description(Enum):
+# class Description(Enum):
 #    PASSENGER_CIVIL_AVIATION_SECURITY_SERVICE_FEE = "PASSENGER CIVIL AVIATION SECURITY SERVICE FEE"
 #    PASSENGER_FACILITY_CHARGE = "PASSENGER FACILITY CHARGE"
 #    PASSENGER_FACILITY_CHARGES = "PASSENGER FACILITY CHARGES"
@@ -1448,7 +1503,8 @@ class GroupedItineraryResponse:
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["baggageAllowanceDescs"] = from_list(lambda x: to_class(BaggageAllowanceDesc, x), self.baggageAllowanceDescs)
+        result["baggageAllowanceDescs"] = from_list(lambda x: to_class(BaggageAllowanceDesc, x),
+                                                    self.baggageAllowanceDescs)
         result["fareComponentDescs"] = from_list(lambda x: to_class(FareComponentDesc, x), self.fareComponentDescs)
         result["itineraryGroups"] = from_list(lambda x: to_class(ItineraryGroup, x), self.itineraryGroups)
         result["legDescs"] = from_list(lambda x: to_class(LegDesc, x), self.legDescs)
@@ -1457,7 +1513,8 @@ class GroupedItineraryResponse:
         result["statistics"] = to_class(Statistics, self.statistics)
         result["taxDescs"] = from_list(lambda x: to_class(TaxDesc, x), self.taxDescs)
         result["taxSummaryDescs"] = from_list(lambda x: to_class(TaxDesc, x), self.taxSummaryDescs)
-        result["validatingCarrierDescs"] = from_list(lambda x: to_class(ValidatingCarrierDesc, x), self.validatingCarrierDescs)
+        result["validatingCarrierDescs"] = from_list(lambda x: to_class(ValidatingCarrierDesc, x),
+                                                     self.validatingCarrierDescs)
         result["version"] = from_str(self.version)
         return result
 
