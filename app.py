@@ -22,10 +22,10 @@ import dateutil.parser
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
- 
+
 API_ENDPOINT = "https://api-crt.cert.havail.sabre.com/v1/offers/shop"
 
-API_KEY = "T1RLAQIMUyd8reWF7jUJHFt2mj128VYXvxApdjqDa0YvAZEwM+fKAxxjAACwlGaYuJAk2p7KlimiWuPwIMcveOMGkyUzfSCQgfEmXrkYrMGE/3aan+xj3BcY9TQg2/fD4dsopIDXtbYyFFKI7RV7fbTlfc8e3dlttqietaGet6KfyYQjye2Lw6nRr2xTP+PNNjSJLMOl8lPYeq7TpBcQIFtStmeCGZLmT6g5sUhqiykssrsMV4c+vORqr8VNkfoMkxx6IZqN90CNeYjgqNimdoB+O2GfTIG7JtxoN4c*"
+API_KEY = "T1RLAQL247bORtEkHyRJWOSKqAFG5b2pmhC1vYss804g4zkCkXx2RoldAACwaENQ4WvZV9Gy/e0wjzoeS8ckvFuEwmCRrtcAyUhoF4Vks60Vzy/igZ++bGBWbgrddTjF8Q6YIE6ciLvNyWGpHnOAnzooxtWYFkkGO9fG8v60ciralXa3MQUr2Cf8Z18U4HDyfnCkmP1uo/tTiIip1jhzemVHJ1gk5oL0fHzxCckKXN6aG1BRpZu7d2SXgh9d9qzpzGZohlPMb4S/HHCDJsGp3A08mRPpdkwkF2JmzRk*"
 hed = {'Authorization': 'Bearer ' + API_KEY, 'Content-Type': 'application/json'}
 data = {
     "OTA_AirLowFareSearchRQ": {
@@ -33,7 +33,7 @@ data = {
             {
                 "DepartureDateTime": "2020-06-21T00:00:00",
                 "DestinationLocation": {
-                    "LocationCode": "DEL"
+                    "LocationCode": "SFO"
                 },
                 "OriginLocation": {
                     "LocationCode": "NYC"
@@ -46,19 +46,9 @@ data = {
                     "LocationCode": "NYC"
                 },
                 "OriginLocation": {
-                    "LocationCode": "DEL"
-                },
-                "RPH": "1"
-            },
-            {
-                "DepartureDateTime": "2020-06-30T00:00:00",
-                "DestinationLocation": {
                     "LocationCode": "SFO"
                 },
-                "OriginLocation": {
-                    "LocationCode": "NYC"
-                },
-                "RPH": "2"
+                "RPH": "1"
             }
         ],
         "POS": {
@@ -89,7 +79,7 @@ data = {
                     "LCC": "Disable",
                     "NDC": "Disable"
                 },
-                "NumTrips": {"Number": 300}
+                "NumTrips": {}
             }
         },
         "TravelerInfoSummary": {
@@ -1175,14 +1165,17 @@ class Arrival:
         result["state"] = self.state
         result["terminal"] = self.terminal
         if '-' in self.time:
-            print(int("-"+self.time.split("-")[1].split(":")[0]));
-            timeValue = datetime.strptime(self.time.split("-")[0], '%H:%M:%S') + timedelta(hours=int("-"+self.time.split("-")[1].split(":")[0]),minutes=int("-"+self.time.split("-")[1].split(":")[1]))
+            print(int("-" + self.time.split("-")[1].split(":")[0]));
+            timeValue = datetime.strptime(self.time.split("-")[0], '%H:%M:%S') + timedelta(
+                hours=int("-" + self.time.split("-")[1].split(":")[0]),
+                minutes=int("-" + self.time.split("-")[1].split(":")[1]))
             print(self.convert12(str(timeValue.time())));
             result["strtime"] = self.convert12(str(timeValue.time()))
         else:
-            timeValue = datetime.strptime(self.time.split("+")[0], '%H:%M:%S') + timedelta(hours=int(self.time.split("+")[1].split(":")[0]),minutes=int(self.time.split("+")[1].split(":")[1]))
+            timeValue = datetime.strptime(self.time.split("+")[0], '%H:%M:%S') + timedelta(
+                hours=int(self.time.split("+")[1].split(":")[0]), minutes=int(self.time.split("+")[1].split(":")[1]))
             print(self.convert12(str(timeValue.time())));
-                #str(self.time.split("+")[0])
+            # str(self.time.split("+")[0])
             result["strtime"] = self.convert12(str(timeValue.time()))
         if '-' in self.time:
             result["strtime24hr"] = self.time.split("-")[0]
@@ -1553,13 +1546,17 @@ def home():
     return "<h1>Distant Reading Archive</h1><p>This site is a prototype API for distant reading of science fiction novels.</p>"
 
 
-@app.route('/api/v1/resources/bargainer/all', methods=['GET'])
+@app.route('/api/v1/resources/bargainer/all', methods=['POST'])
 def api_all():
-    r = requests.post(url=API_ENDPOINT, json=data, headers=hed)
-    # print(json.dumps(json.loads(r.content), indent=4, sort_keys=True))
+    # print(data['OTA_AirLowFareSearchRQ']['OriginDestinationInformation'][0]['DestinationLocation'])
+    # for change in data['OTA_AirLowFareSearchRQ']['OriginDestinationInformation']:
+    # strip the contents of trailing white spaces (new line)
+    # change["DestinationLocation"] = "NYC"
+    print(request.json)
+    r = requests.post(url=API_ENDPOINT, json=request.json, headers=hed)
     result = welcome_from_dict(json.loads(r.content))
-    employeeJSONData = result.to_dict()
-    return employeeJSONData
+    sabreAPIResponse = result.to_dict()
+    return sabreAPIResponse
 
 
 if __name__ == "__main__":
