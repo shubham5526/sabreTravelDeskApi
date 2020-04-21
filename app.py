@@ -1552,6 +1552,7 @@ def api_all():
     # for change in data['OTA_AirLowFareSearchRQ']['OriginDestinationInformation']:
     # strip the contents of trailing white spaces (new line)
     # change["DestinationLocation"] = "NYC"
+    print(data)
     print(request.json)
     r = requests.post(url=API_ENDPOINT, json=request.json, headers=hed)
     result = welcome_from_dict(json.loads(r.content))
