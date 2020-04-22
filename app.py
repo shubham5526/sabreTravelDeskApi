@@ -25,7 +25,7 @@ app.config["DEBUG"] = True
 
 API_ENDPOINT = "https://api-crt.cert.havail.sabre.com/v1/offers/shop"
 
-API_KEY = "T1RLAQL247bORtEkHyRJWOSKqAFG5b2pmhC1vYss804g4zkCkXx2RoldAACwaENQ4WvZV9Gy/e0wjzoeS8ckvFuEwmCRrtcAyUhoF4Vks60Vzy/igZ++bGBWbgrddTjF8Q6YIE6ciLvNyWGpHnOAnzooxtWYFkkGO9fG8v60ciralXa3MQUr2Cf8Z18U4HDyfnCkmP1uo/tTiIip1jhzemVHJ1gk5oL0fHzxCckKXN6aG1BRpZu7d2SXgh9d9qzpzGZohlPMb4S/HHCDJsGp3A08mRPpdkwkF2JmzRk*"
+API_KEY = "T1RLAQI2eWWAJF6ZJIUeBEgqNy26b3SFwRAxw6mt8G23SRiBDboeasEwAACwv4DaPLX7LX9yZaQC4WUQgjvp4HJRb66DHV/G5jI6U7Zfr1w/dzJs+58u2s6nOk0XOHz439DVNEPBZ19WVOj3dG2bvsvEhizKJW1RtIycL8cjLkuBTogOY3iIfdtWDql/Ao4fWUOY7C34Z74GIR7Xgm5sWwJw/Uxl8lUpTMQnLfEyRtBDC8U1ZCtzbUGY1PthieUKkOwji7hz3YWOyHBHaWV1E3tw0BiVniFkd0w5/FY*"
 hed = {'Authorization': 'Bearer ' + API_KEY, 'Content-Type': 'application/json'}
 data = {
     "OTA_AirLowFareSearchRQ": {
@@ -781,7 +781,10 @@ class PassengerInfo:
     @staticmethod
     def from_dict(obj: Any) -> 'PassengerInfo':
         assert isinstance(obj, dict)
-        baggageInformation = from_list(BaggageInformation.from_dict, obj.get("baggageInformation"))
+        #if 'None' in obj.get("baggageInformation"):
+            #baggageInformation = from_list(BaggageInformation.from_dict, obj.get("baggageInformation"))
+        #else:
+        baggageInformation = obj.get("baggageInformation")
         currencyConversion = CurrencyConversion.from_dict(obj.get("currencyConversion"))
         fareComponents = from_list(FareComponent.from_dict, obj.get("fareComponents"))
         fareMessages = from_list(FareMessage.from_dict, obj.get("fareMessages"))
@@ -796,7 +799,8 @@ class PassengerInfo:
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["baggageInformation"] = from_list(lambda x: to_class(BaggageInformation, x), self.baggageInformation)
+        #result["baggageInformation"] = from_list(lambda x: to_class(BaggageInformation, x), self.baggageInformation)
+        result["baggageInformation"] =  self.baggageInformation
         result["currencyConversion"] = to_class(CurrencyConversion, self.currencyConversion)
         result["fareComponents"] = from_list(lambda x: to_class(FareComponent, x), self.fareComponents)
         result["fareMessages"] = from_list(lambda x: to_class(FareMessage, x), self.fareMessages)
@@ -1552,9 +1556,9 @@ def api_all():
     # for change in data['OTA_AirLowFareSearchRQ']['OriginDestinationInformation']:
     # strip the contents of trailing white spaces (new line)
     # change["DestinationLocation"] = "NYC"
-    print(data)
     print(request.json)
     r = requests.post(url=API_ENDPOINT, json=request.json, headers=hed)
+    print(r.content);
     result = welcome_from_dict(json.loads(r.content))
     sabreAPIResponse = result.to_dict()
     return sabreAPIResponse
