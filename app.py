@@ -325,7 +325,7 @@ class FareComponentDesc:
         notValidAfter = obj.get("notValidAfter")
         oneWayFare = obj.get("oneWayFare")
         publishedFareAmount = obj.get("publishedFareAmount")
-        segments = from_list(FareComponentDescSegment.from_dict, obj.get("segments"))
+        segments = obj.get("segments")
         vendorCode = VendorCode(obj.get("vendorCode"))
         notValidBefore = obj.get("notValidBefore")
         return FareComponentDesc(applicablePricingCategories, direction, directionality, fareAmount, fareBasisCode,
@@ -351,7 +351,7 @@ class FareComponentDesc:
         result["notValidAfter"] = self.notValidAfter
         result["oneWayFare"] = self.oneWayFare
         result["publishedFareAmount"] = self.publishedFareAmount
-        result["segments"] = from_list(lambda x: to_class(FareComponentDescSegment, x), self.segments)
+        result["segments"] =  self.segments
         result["vendorCode"] = to_enum(VendorCode, self.vendorCode)
         result["notValidBefore"] = self.notValidBefore
         return result
@@ -602,12 +602,13 @@ class FareComponentSegment:
     @staticmethod
     def from_dict(obj: Any) -> 'FareComponentSegment':
         assert isinstance(obj, dict)
-        segment = FluffySegment.from_dict(obj.get("segment"))
+        #segment = FluffySegment.from_dict(obj.get("segment"))
+        segment = obj.get("segment")
         return FareComponentSegment(segment)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["segment"] = to_class(FluffySegment, self.segment)
+        result["segment"] = self.segment
         return result
 
 
