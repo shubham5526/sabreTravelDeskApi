@@ -1176,12 +1176,14 @@ class Arrival:
                 minutes=int("-" + self.time.split("-")[1].split(":")[1]))
             print(self.convert12(str(timeValue.time())));
             result["strtime"] = self.convert12(str(timeValue.time()))
+            result["strtime24hrLocal"] = str(timeValue.time())
         else:
             timeValue = datetime.strptime(self.time.split("+")[0], '%H:%M:%S') + timedelta(
                 hours=int(self.time.split("+")[1].split(":")[0]), minutes=int(self.time.split("+")[1].split(":")[1]))
             print(self.convert12(str(timeValue.time())));
             # str(self.time.split("+")[0])
             result["strtime"] = self.convert12(str(timeValue.time()))
+            result["strtime24hrLocal"] = str(timeValue.time())
         if '-' in self.time:
             result["strtime24hr"] = self.time.split("-")[0]
         else:
