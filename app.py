@@ -1486,7 +1486,7 @@ def api_all():
 
 @app.route('/api/v1/resources/createflightpnr', methods=['POST'])
 def createflightpnr():
-    print(request.json.get('FlightSegment'))
+    print(request.json['AirBook'])
     StateCountyProv = CreatePNRModel.StateCountyProv('TX')
     Address = CreatePNRModel.Address('SABRE TRAVEL', 'SOUTHLAKE', 'US', '76092', StateCountyProv, '3150 SABRE DRIVE')
     Ticketing = CreatePNRModel.Ticketing('7TAW')
