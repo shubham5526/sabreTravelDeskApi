@@ -3,103 +3,21 @@ from flask import request, jsonify
 import requests
 import json
 import time
-# This code parses date/times, so please
-#
-#     pip install python-dateutil
-#
-# To use this code, make sure you
-#
-#     import json
-#
-# and then, to convert JSON from a string, do
-#
-#     result = welcome_from_dict(json.loads(json_string))
-
 from typing import Any, Optional, List, Union, TypeVar, Type, cast, Callable
 from enum import Enum
 from datetime import datetime, timedelta
 import dateutil.parser
 
+import CreatePNRModel as CreatePNRModel
+
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
-API_ENDPOINT = "https://api-crt.cert.havail.sabre.com/v1/offers/shop"
+BFM_Endpoint = "https://api-crt.cert.havail.sabre.com/v1/offers/shop"
+PNR_Endpoint = "https://api-crt.cert.havail.sabre.com/v2.3.0/passenger/records?mode=create"
 
-API_KEY = "T1RLAQIWBjPjJIeziovgfM4Z5V+Mt1/fKRDAqJpT9nPCKVUPoaaKHPdeAACwvElmG2wr2HLRZanFtUKS2s0Sd/o/ElSHeDWNtcPBph+CoOWFpIPH0/IECGXMkm6TslnwlgnzRvvZV++Cs9rKB7Q/6/JiGHB1YTJBMnrwR0NFz+oNqnA+kqe6hrh7Gk5e8bqlfGGl1u7ahxnwVQHfF8mQc9Gbq31IS+cwEN7MpAM8m7gczKptuQ/l1nuBsBMzxjCYCWywyrGhF9eJadp0V6Ey/1G0Y5bXk2nuiL4Bhow*"
-hed = {'Authorization': 'Bearer ' + API_KEY, 'Content-Type': 'application/json'}
-data = {
-    "OTA_AirLowFareSearchRQ": {
-        "OriginDestinationInformation": [
-            {
-                "DepartureDateTime": "2020-06-21T00:00:00",
-                "DestinationLocation": {
-                    "LocationCode": "SFO"
-                },
-                "OriginLocation": {
-                    "LocationCode": "NYC"
-                },
-                "RPH": "0"
-            },
-            {
-                "DepartureDateTime": "2020-06-28T00:00:00",
-                "DestinationLocation": {
-                    "LocationCode": "NYC"
-                },
-                "OriginLocation": {
-                    "LocationCode": "SFO"
-                },
-                "RPH": "1"
-            }
-        ],
-        "POS": {
-            "Source": [
-                {
-                    "PseudoCityCode": "F9CE",
-                    "RequestorID": {
-                        "CompanyName": {
-                            "Code": "TN"
-                        },
-                        "ID": "1",
-                        "Type": "1"
-                    }
-                }
-            ]
-        },
-        "TPA_Extensions": {
-            "IntelliSellTransaction": {
-                "RequestType": {
-                    "Name": "200ITINS"
-                }
-            }
-        },
-        "TravelPreferences": {
-            "TPA_Extensions": {
-                "DataSources": {
-                    "ATPCO": "Enable",
-                    "LCC": "Disable",
-                    "NDC": "Disable"
-                },
-                "NumTrips": {}
-            }
-        },
-        "TravelerInfoSummary": {
-            "AirTravelerAvail": [
-                {
-                    "PassengerTypeQuantity": [
-                        {
-                            "Code": "ADT",
-                            "Quantity": 1
-                        }
-                    ]
-                }
-            ],
-            "SeatsRequested": [
-                1
-            ]
-        },
-        "Version": "1"
-    }
-}
+API_KEY = "T1RLAQL2f74iXSYw84qllX7u4YLF58fdihB2tMTvkZRNTBx5TQ3aK2LBAACwWVROmb4LYJqeRo5Wsc8ac4mpeH1AQmTVPEdx/jRIGh8vyjr4gGhLEvw1F7SL/0sQ6qNUuQuKRaA7C6JpjJCXeiLeZ9RddMo7RL9sfvcKwWZzF6vmawWCBkgMcDnFBEW8zkwKyT9CW4nyZk8S1cza/67nmB78x/REU2jytq9+9Uv0uvw9eFVZDKNN6SowGP7HbxkyYGjJFkawu7TtTYxqcKtO8mzCZQiBajRtLZk/BQc*"
+AuthorizationHeader = {'Authorization': 'Bearer ' + API_KEY, 'Content-Type': 'application/json'}
 
 T = TypeVar("T")
 EnumT = TypeVar("EnumT", bound=Enum)
@@ -351,7 +269,7 @@ class FareComponentDesc:
         result["notValidAfter"] = self.notValidAfter
         result["oneWayFare"] = self.oneWayFare
         result["publishedFareAmount"] = self.publishedFareAmount
-        result["segments"] =  self.segments
+        result["segments"] = self.segments
         result["vendorCode"] = to_enum(VendorCode, self.vendorCode)
         result["notValidBefore"] = self.notValidBefore
         return result
@@ -602,7 +520,7 @@ class FareComponentSegment:
     @staticmethod
     def from_dict(obj: Any) -> 'FareComponentSegment':
         assert isinstance(obj, dict)
-        #segment = FluffySegment.from_dict(obj.get("segment"))
+        # segment = FluffySegment.from_dict(obj.get("segment"))
         segment = obj.get("segment")
         return FareComponentSegment(segment)
 
@@ -782,9 +700,9 @@ class PassengerInfo:
     @staticmethod
     def from_dict(obj: Any) -> 'PassengerInfo':
         assert isinstance(obj, dict)
-        #if 'None' in obj.get("baggageInformation"):
-            #baggageInformation = from_list(BaggageInformation.from_dict, obj.get("baggageInformation"))
-        #else:
+        # if 'None' in obj.get("baggageInformation"):
+        # baggageInformation = from_list(BaggageInformation.from_dict, obj.get("baggageInformation"))
+        # else:
         baggageInformation = obj.get("baggageInformation")
         currencyConversion = CurrencyConversion.from_dict(obj.get("currencyConversion"))
         fareComponents = from_list(FareComponent.from_dict, obj.get("fareComponents"))
@@ -800,8 +718,8 @@ class PassengerInfo:
 
     def to_dict(self) -> dict:
         result: dict = {}
-        #result["baggageInformation"] = from_list(lambda x: to_class(BaggageInformation, x), self.baggageInformation)
-        result["baggageInformation"] =  self.baggageInformation
+        # result["baggageInformation"] = from_list(lambda x: to_class(BaggageInformation, x), self.baggageInformation)
+        result["baggageInformation"] = self.baggageInformation
         result["currencyConversion"] = to_class(CurrencyConversion, self.currencyConversion)
         result["fareComponents"] = from_list(lambda x: to_class(FareComponent, x), self.fareComponents)
         result["fareMessages"] = from_list(lambda x: to_class(FareMessage, x), self.fareMessages)
@@ -1560,11 +1478,50 @@ def api_all():
     # strip the contents of trailing white spaces (new line)
     # change["DestinationLocation"] = "NYC"
     print(request.json)
-    r = requests.post(url=API_ENDPOINT, json=request.json, headers=hed)
+    r = requests.post(url=BFM_Endpoint, json=request.json, headers=AuthorizationHeader)
     print(r.content);
     result = welcome_from_dict(json.loads(r.content))
     sabreAPIResponse = result.to_dict()
     return sabreAPIResponse
+
+@app.route('/api/v1/resources/createflightpnr', methods=['POST'])
+def createflightpnr():
+    print(request.json)
+    StateCountyProv = CreatePNRModel.StateCountyProv('TX')
+    Address = CreatePNRModel.Address('SABRE TRAVEL', 'SOUTHLAKE', 'US', '76092', StateCountyProv, '3150 SABRE DRIVE')
+    Ticketing = CreatePNRModel.Ticketing('7TAW')
+    AgencyInfo = CreatePNRModel.AgencyInfo(Address, Ticketing)
+    ContactNumber = CreatePNRModel.ContactNumber('1.1', '817-555-1212', 'H')
+    ContactNumbers = [ContactNumber]
+    ContactNumbers = CreatePNRModel.ContactNumbers(ContactNumbers)
+    PersonName = CreatePNRModel.PersonName('1.1', 'ADT', 'Shubbham', 'Gupta')
+    PersonNames = [PersonName]
+    CustomerInfo = CreatePNRModel.CustomerInfo(ContactNumbers, PersonNames)
+    TravelItineraryAddInfo = CreatePNRModel.TravelItineraryAddInfo(AgencyInfo, CustomerInfo)
+    RetryRebook = CreatePNRModel.RetryRebook(bool(1))
+    HaltOnStatuses = [CreatePNRModel.HaltOnStatus('HL'), CreatePNRModel.HaltOnStatus('KK'),
+                      CreatePNRModel.HaltOnStatus('LL'), CreatePNRModel.HaltOnStatus('NN'),
+                      CreatePNRModel.HaltOnStatus('NO')]
+    FlightSegment = CreatePNRModel.FlightSegment('2020-06-20T10:13:00', '2020-06-20T07:00:00', '1848', '1', 'Y', 'GK',
+                                                 CreatePNRModel.NLocation('SFO'),
+                                                 CreatePNRModel.MarketingAirline('UA', '1848'),
+                                                 CreatePNRModel.NLocation('EWR'), bool(0))
+    OriginDestinationInformations = [FlightSegment]
+    AirBook = CreatePNRModel.AirBook(RetryRebook, HaltOnStatuses,
+                                     CreatePNRModel.OriginDestinationInformation(OriginDestinationInformations))
+    Source = CreatePNRModel.Source('SP TEST')
+    EndTransaction = CreatePNRModel.EndTransaction(Source)
+    RedisplayReservation = CreatePNRModel.RedisplayReservation(100)
+    PostProcessing = CreatePNRModel.PostProcessing(EndTransaction, RedisplayReservation)
+    CreatePassengerNameRecordRQ = CreatePNRModel.CreatePassengerNameRecordRQ('2.3.0', 'C3RK', bool(0),
+                                                                             TravelItineraryAddInfo, AirBook,
+                                                                             PostProcessing)
+
+    createPNRJson =json.dumps(CreatePNRModel.Welcome(CreatePassengerNameRecordRQ), default=lambda o: o.__dict__);
+    print(json.loads(createPNRJson))
+    r = requests.post(url=PNR_Endpoint, json=json.loads(createPNRJson), headers=AuthorizationHeader)
+    print(r.content)
+    return r.content
 
 
 if __name__ == "__main__":
