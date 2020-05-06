@@ -1484,6 +1484,7 @@ def api_all():
     sabreAPIResponse = result.to_dict()
     return sabreAPIResponse
 
+
 @app.route('/api/v1/resources/createflightpnr', methods=['POST'])
 def createflightpnr():
     print(request.json['CreatePassengerNameRecordRQ']['AirBook']['OriginDestinationInformation']['FlightSegment'])
@@ -1491,10 +1492,12 @@ def createflightpnr():
     Address = CreatePNRModel.Address('SABRE TRAVEL', 'SOUTHLAKE', 'US', '76092', StateCountyProv, '3150 SABRE DRIVE')
     Ticketing = CreatePNRModel.Ticketing('7TAW')
     AgencyInfo = CreatePNRModel.AgencyInfo(Address, Ticketing)
-    #ContactNumber = CreatePNRModel.ContactNumber('1.1', '817-555-1212', 'H') commented code
-    ContactNumbers = request.json['CreatePassengerNameRecordRQ']['TravelItineraryAddInfo']['CustomerInfo']['ContactNumbers']['ContactNumber']
+    # ContactNumber = CreatePNRModel.ContactNumber('1.1', '817-555-1212', 'H') commented code
+    ContactNumbers = \
+    request.json['CreatePassengerNameRecordRQ']['TravelItineraryAddInfo']['CustomerInfo']['ContactNumbers'][
+        'ContactNumber']
     ContactNumbers = CreatePNRModel.ContactNumbers(ContactNumbers)
-    #PersonName = CreatePNRModel.PersonName('1.1', 'ADT', 'Shubbham', 'Gupta') commented code
+    # PersonName = CreatePNRModel.PersonName('1.1', 'ADT', 'Shubbham', 'Gupta') commented code
     PersonNames = request.json['CreatePassengerNameRecordRQ']['TravelItineraryAddInfo']['CustomerInfo']['PersonName']
     Emails = request.json['CreatePassengerNameRecordRQ']['TravelItineraryAddInfo']['CustomerInfo']['Email']
     CustomerInfo = CreatePNRModel.CustomerInfo(ContactNumbers, PersonNames, Emails)
@@ -1503,20 +1506,21 @@ def createflightpnr():
     HaltOnStatuses = [CreatePNRModel.HaltOnStatus('HL'), CreatePNRModel.HaltOnStatus('KK'),
                       CreatePNRModel.HaltOnStatus('LL'), CreatePNRModel.HaltOnStatus('NN'),
                       CreatePNRModel.HaltOnStatus('NO')]
-    FlightSegment = request.json['CreatePassengerNameRecordRQ']['AirBook']['OriginDestinationInformation']['FlightSegment']
+    FlightSegment = request.json['CreatePassengerNameRecordRQ']['AirBook']['OriginDestinationInformation'][
+        'FlightSegment']
     OriginDestinationInformations = FlightSegment
     AirBook = CreatePNRModel.AirBook(RetryRebook, HaltOnStatuses,
                                      CreatePNRModel.OriginDestinationInformation(OriginDestinationInformations))
     Source = CreatePNRModel.Source('SP TEST')
     EmailEndTransaction = CreatePNRModel.EmailEndTransaction(bool(1))
-    EndTransaction = CreatePNRModel.EndTransaction(Source,EmailEndTransaction)
+    EndTransaction = CreatePNRModel.EndTransaction(Source, EmailEndTransaction)
     RedisplayReservation = CreatePNRModel.RedisplayReservation(100)
     PostProcessing = CreatePNRModel.PostProcessing(EndTransaction, RedisplayReservation)
     CreatePassengerNameRecordRQ = CreatePNRModel.CreatePassengerNameRecordRQ('2.3.0', 'C3RK', bool(0),
                                                                              TravelItineraryAddInfo, AirBook,
                                                                              PostProcessing)
 
-    createPNRJson =json.dumps(CreatePNRModel.Welcome(CreatePassengerNameRecordRQ), default=lambda o: o.__dict__);
+    createPNRJson = json.dumps(CreatePNRModel.Welcome(CreatePassengerNameRecordRQ), default=lambda o: o.__dict__);
     print(json.loads(createPNRJson))
     r = requests.post(url=PNR_Endpoint, json=json.loads(createPNRJson), headers=AuthorizationHeader)
     print(r.content)
