@@ -1491,12 +1491,13 @@ def createflightpnr():
     Address = CreatePNRModel.Address('SABRE TRAVEL', 'SOUTHLAKE', 'US', '76092', StateCountyProv, '3150 SABRE DRIVE')
     Ticketing = CreatePNRModel.Ticketing('7TAW')
     AgencyInfo = CreatePNRModel.AgencyInfo(Address, Ticketing)
-    ContactNumber = CreatePNRModel.ContactNumber('1.1', '817-555-1212', 'H')
+    #ContactNumber = CreatePNRModel.ContactNumber('1.1', '817-555-1212', 'H') commented code
     ContactNumbers = request.json['CreatePassengerNameRecordRQ']['TravelItineraryAddInfo']['CustomerInfo']['ContactNumbers']['ContactNumber']
     ContactNumbers = CreatePNRModel.ContactNumbers(ContactNumbers)
-    PersonName = CreatePNRModel.PersonName('1.1', 'ADT', 'Shubbham', 'Gupta')
+    #PersonName = CreatePNRModel.PersonName('1.1', 'ADT', 'Shubbham', 'Gupta') commented code
     PersonNames = request.json['CreatePassengerNameRecordRQ']['TravelItineraryAddInfo']['CustomerInfo']['PersonName']
-    CustomerInfo = CreatePNRModel.CustomerInfo(ContactNumbers, PersonNames)
+    Emails = request.json['CreatePassengerNameRecordRQ']['TravelItineraryAddInfo']['CustomerInfo']['Email']
+    CustomerInfo = CreatePNRModel.CustomerInfo(ContactNumbers, PersonNames, Emails)
     TravelItineraryAddInfo = CreatePNRModel.TravelItineraryAddInfo(AgencyInfo, CustomerInfo)
     RetryRebook = CreatePNRModel.RetryRebook(bool(1))
     HaltOnStatuses = [CreatePNRModel.HaltOnStatus('HL'), CreatePNRModel.HaltOnStatus('KK'),
@@ -1507,7 +1508,8 @@ def createflightpnr():
     AirBook = CreatePNRModel.AirBook(RetryRebook, HaltOnStatuses,
                                      CreatePNRModel.OriginDestinationInformation(OriginDestinationInformations))
     Source = CreatePNRModel.Source('SP TEST')
-    EndTransaction = CreatePNRModel.EndTransaction(Source)
+    EmailEndTransaction = CreatePNRModel.EmailEndTransaction(bool(1))
+    EndTransaction = CreatePNRModel.EndTransaction(Source,EmailEndTransaction)
     RedisplayReservation = CreatePNRModel.RedisplayReservation(100)
     PostProcessing = CreatePNRModel.PostProcessing(EndTransaction, RedisplayReservation)
     CreatePassengerNameRecordRQ = CreatePNRModel.CreatePassengerNameRecordRQ('2.3.0', 'C3RK', bool(0),
