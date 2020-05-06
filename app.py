@@ -1492,10 +1492,10 @@ def createflightpnr():
     Ticketing = CreatePNRModel.Ticketing('7TAW')
     AgencyInfo = CreatePNRModel.AgencyInfo(Address, Ticketing)
     ContactNumber = CreatePNRModel.ContactNumber('1.1', '817-555-1212', 'H')
-    ContactNumbers = [ContactNumber]
+    ContactNumbers = request.json['CreatePassengerNameRecordRQ']['TravelItineraryAddInfo']['CustomerInfo']['ContactNumbers']['ContactNumber']
     ContactNumbers = CreatePNRModel.ContactNumbers(ContactNumbers)
     PersonName = CreatePNRModel.PersonName('1.1', 'ADT', 'Shubbham', 'Gupta')
-    PersonNames = [PersonName]
+    PersonNames = request.json['CreatePassengerNameRecordRQ']['TravelItineraryAddInfo']['CustomerInfo']['PersonName']
     CustomerInfo = CreatePNRModel.CustomerInfo(ContactNumbers, PersonNames)
     TravelItineraryAddInfo = CreatePNRModel.TravelItineraryAddInfo(AgencyInfo, CustomerInfo)
     RetryRebook = CreatePNRModel.RetryRebook(bool(1))
