@@ -1503,7 +1503,7 @@ def createflightpnr():
                       CreatePNRModel.HaltOnStatus('LL'), CreatePNRModel.HaltOnStatus('NN'),
                       CreatePNRModel.HaltOnStatus('NO')]
     FlightSegment = request.json['CreatePassengerNameRecordRQ']['AirBook']['OriginDestinationInformation']['FlightSegment']
-    OriginDestinationInformations = [FlightSegment]
+    OriginDestinationInformations = FlightSegment
     AirBook = CreatePNRModel.AirBook(RetryRebook, HaltOnStatuses,
                                      CreatePNRModel.OriginDestinationInformation(OriginDestinationInformations))
     Source = CreatePNRModel.Source('SP TEST')
