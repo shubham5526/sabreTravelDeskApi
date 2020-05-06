@@ -14,7 +14,6 @@ from typing import Optional, Any, List, TypeVar, Type, cast, Callable
 from datetime import datetime
 import dateutil.parser
 
-
 T = TypeVar("T")
 
 
@@ -120,7 +119,9 @@ class MarketingAirline:
     def to_dict(self) -> dict:
         result: dict = {}
         result["Code"] = from_union([from_str, from_none], self.Code)
-        result["FlightNumber"] = from_union([lambda x: from_none((lambda x: is_type(type(None), x))(x)), lambda x: from_str((lambda x: str((lambda x: is_type(int, x))(x)))(x))], self.FlightNumber)
+        result["FlightNumber"] = from_union([lambda x: from_none((lambda x: is_type(type(None), x))(x)),
+                                             lambda x: from_str((lambda x: str((lambda x: is_type(int, x))(x)))(x))],
+                                            self.FlightNumber)
         return result
 
 
@@ -136,7 +137,11 @@ class FlightSegment:
     OriginLocation: Optional[NLocation]
     InstantPurchase: Optional[bool]
 
-    def __init__(self, ArrivalDateTime: Optional[datetime], DepartureDateTime: Optional[datetime], FlightNumber: Optional[int], NumberInParty: Optional[int], ResBookDesigCode: Optional[str], Status: Optional[str], DestinationLocation: Optional[NLocation], MarketingAirline: Optional[MarketingAirline], OriginLocation: Optional[NLocation], InstantPurchase: Optional[bool]) -> None:
+    def __init__(self, ArrivalDateTime: Optional[datetime], DepartureDateTime: Optional[datetime],
+                 FlightNumber: Optional[int], NumberInParty: Optional[int], ResBookDesigCode: Optional[str],
+                 Status: Optional[str], DestinationLocation: Optional[NLocation],
+                 MarketingAirline: Optional[MarketingAirline], OriginLocation: Optional[NLocation],
+                 InstantPurchase: Optional[bool]) -> None:
         self.ArrivalDateTime = ArrivalDateTime
         self.DepartureDateTime = DepartureDateTime
         self.FlightNumber = FlightNumber
@@ -161,18 +166,25 @@ class FlightSegment:
         MarketingAirline = from_union([MarketingAirline.from_dict, from_none], obj.get("MarketingAirline"))
         OriginLocation = from_union([NLocation.from_dict, from_none], obj.get("OriginLocation"))
         InstantPurchase = from_union([from_bool, from_none], obj.get("InstantPurchase"))
-        return FlightSegment(ArrivalDateTime, DepartureDateTime, FlightNumber, NumberInParty, ResBookDesigCode, Status, DestinationLocation, MarketingAirline, OriginLocation, InstantPurchase)
+        return FlightSegment(ArrivalDateTime, DepartureDateTime, FlightNumber, NumberInParty, ResBookDesigCode, Status,
+                             DestinationLocation, MarketingAirline, OriginLocation, InstantPurchase)
 
     def to_dict(self) -> dict:
         result: dict = {}
         result["ArrivalDateTime"] = from_union([lambda x: x.isoformat(), from_none], self.ArrivalDateTime)
         result["DepartureDateTime"] = from_union([lambda x: x.isoformat(), from_none], self.DepartureDateTime)
-        result["FlightNumber"] = from_union([lambda x: from_none((lambda x: is_type(type(None), x))(x)), lambda x: from_str((lambda x: str((lambda x: is_type(int, x))(x)))(x))], self.FlightNumber)
-        result["NumberInParty"] = from_union([lambda x: from_none((lambda x: is_type(type(None), x))(x)), lambda x: from_str((lambda x: str((lambda x: is_type(int, x))(x)))(x))], self.NumberInParty)
+        result["FlightNumber"] = from_union([lambda x: from_none((lambda x: is_type(type(None), x))(x)),
+                                             lambda x: from_str((lambda x: str((lambda x: is_type(int, x))(x)))(x))],
+                                            self.FlightNumber)
+        result["NumberInParty"] = from_union([lambda x: from_none((lambda x: is_type(type(None), x))(x)),
+                                              lambda x: from_str((lambda x: str((lambda x: is_type(int, x))(x)))(x))],
+                                             self.NumberInParty)
         result["ResBookDesigCode"] = from_union([from_str, from_none], self.ResBookDesigCode)
         result["Status"] = from_union([from_str, from_none], self.Status)
-        result["DestinationLocation"] = from_union([lambda x: to_class(NLocation, x), from_none], self.DestinationLocation)
-        result["MarketingAirline"] = from_union([lambda x: to_class(MarketingAirline, x), from_none], self.MarketingAirline)
+        result["DestinationLocation"] = from_union([lambda x: to_class(NLocation, x), from_none],
+                                                   self.DestinationLocation)
+        result["MarketingAirline"] = from_union([lambda x: to_class(MarketingAirline, x), from_none],
+                                                self.MarketingAirline)
         result["OriginLocation"] = from_union([lambda x: to_class(NLocation, x), from_none], self.OriginLocation)
         result["InstantPurchase"] = from_union([from_bool, from_none], self.InstantPurchase)
         return result
@@ -187,12 +199,14 @@ class OriginDestinationInformation:
     @staticmethod
     def from_dict(obj: Any) -> 'OriginDestinationInformation':
         assert isinstance(obj, dict)
-        FlightSegment = from_union([lambda x: from_list(FlightSegment.from_dict, x), from_none], obj.get("FlightSegment"))
+        FlightSegment = from_union([lambda x: from_list(FlightSegment.from_dict, x), from_none],
+                                   obj.get("FlightSegment"))
         return OriginDestinationInformation(FlightSegment)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["FlightSegment"] = from_union([lambda x: from_list(lambda x: to_class(FlightSegment, x), x), from_none], self.FlightSegment)
+        result["FlightSegment"] = from_union([lambda x: from_list(lambda x: to_class(FlightSegment, x), x), from_none],
+                                             self.FlightSegment)
         return result
 
 
@@ -219,7 +233,8 @@ class AirBook:
     HaltOnStatus: Optional[List[HaltOnStatus]]
     OriginDestinationInformation: OriginDestinationInformation
 
-    def __init__(self, RetryRebook: Optional[RetryRebook], HaltOnStatus: Optional[List[HaltOnStatus]], OriginDestinationInformation: Optional[OriginDestinationInformation]) -> None:
+    def __init__(self, RetryRebook: Optional[RetryRebook], HaltOnStatus: Optional[List[HaltOnStatus]],
+                 OriginDestinationInformation: Optional[OriginDestinationInformation]) -> None:
         self.RetryRebook = RetryRebook
         self.HaltOnStatus = HaltOnStatus
         self.OriginDestinationInformation = OriginDestinationInformation
@@ -229,14 +244,17 @@ class AirBook:
         assert isinstance(obj, dict)
         RetryRebook = from_union([RetryRebook.from_dict, from_none], obj.get("RetryRebook"))
         HaltOnStatus = from_union([lambda x: from_list(HaltOnStatus.from_dict, x), from_none], obj.get("HaltOnStatus"))
-        OriginDestinationInformation = from_union([OriginDestinationInformation.from_dict, from_none], obj.get("OriginDestinationInformation"))
+        OriginDestinationInformation = from_union([OriginDestinationInformation.from_dict, from_none],
+                                                  obj.get("OriginDestinationInformation"))
         return AirBook(RetryRebook, HaltOnStatus, OriginDestinationInformation)
 
     def to_dict(self) -> dict:
         result: dict = {}
         result["RetryRebook"] = from_union([lambda x: to_class(RetryRebook, x), from_none], self.RetryRebook)
-        result["HaltOnStatus"] = from_union([lambda x: from_list(lambda x: to_class(HaltOnStatus, x), x), from_none], self.HaltOnStatus)
-        result["OriginDestinationInformation"] = from_union([lambda x: to_class(OriginDestinationInformation, x), from_none], self.OriginDestinationInformation)
+        result["HaltOnStatus"] = from_union([lambda x: from_list(lambda x: to_class(HaltOnStatus, x), x), from_none],
+                                            self.HaltOnStatus)
+        result["OriginDestinationInformation"] = from_union(
+            [lambda x: to_class(OriginDestinationInformation, x), from_none], self.OriginDestinationInformation)
         return result
 
 
@@ -258,21 +276,43 @@ class Source:
         return result
 
 
+class EmailEndTransaction:
+    Ind: Optional[bool]
+
+    def __init__(self, Ind: Optional[str]) -> None:
+        self.Ind = Ind
+
+    @staticmethod
+    def from_dict(obj: Any) -> 'EmailEndTransaction':
+        assert isinstance(obj, dict)
+        Ind = from_union([from_bool, from_none], obj.get("Ind"))
+        return EmailEndTransaction(Ind)
+
+    def to_dict(self) -> dict:
+        result: dict = {}
+        result["Ind"] = from_union([from_bool, from_none], self.get("Ind"))
+        return result
+
+
 class EndTransaction:
     Source: Optional[Source]
+    Email: Optional[EmailEndTransaction]
 
-    def __init__(self, Source: Optional[Source]) -> None:
+    def __init__(self, Source: Optional[Source], Email: Optional[EmailEndTransaction]) -> None:
         self.Source = Source
+        self.Email = Email
 
     @staticmethod
     def from_dict(obj: Any) -> 'EndTransaction':
         assert isinstance(obj, dict)
         Source = from_union([Source.from_dict, from_none], obj.get("Source"))
+        Email = from_union([EmailEndTransaction.from_dict, from_none], obj.get("Email"))
         return EndTransaction(Source)
 
     def to_dict(self) -> dict:
         result: dict = {}
         result["Source"] = from_union([lambda x: to_class(Source, x), from_none], self.Source)
+        result["Email"] = from_union([lambda x: to_class(EmailEndTransaction, x), from_none], self.Email)
         return result
 
 
@@ -298,7 +338,8 @@ class PostProcessing:
     EndTransaction: Optional[EndTransaction]
     RedisplayReservation: Optional[RedisplayReservation]
 
-    def __init__(self, EndTransaction: Optional[EndTransaction], RedisplayReservation: Optional[RedisplayReservation]) -> None:
+    def __init__(self, EndTransaction: Optional[EndTransaction],
+                 RedisplayReservation: Optional[RedisplayReservation]) -> None:
         self.EndTransaction = EndTransaction
         self.RedisplayReservation = RedisplayReservation
 
@@ -312,7 +353,8 @@ class PostProcessing:
     def to_dict(self) -> dict:
         result: dict = {}
         result["EndTransaction"] = from_union([lambda x: to_class(EndTransaction, x), from_none], self.EndTransaction)
-        result["RedisplayReservation"] = from_union([lambda x: to_class(RedisplayReservation, x), from_none], self.RedisplayReservation)
+        result["RedisplayReservation"] = from_union([lambda x: to_class(RedisplayReservation, x), from_none],
+                                                    self.RedisplayReservation)
         return result
 
 
@@ -342,7 +384,9 @@ class Address:
     StateCountyProv: Optional[StateCountyProv]
     StreetNmbr: Optional[str]
 
-    def __init__(self, AddressLine: Optional[str], CityName: Optional[str], CountryCode: Optional[str], PostalCode: Optional[int], StateCountyProv: Optional[StateCountyProv], StreetNmbr: Optional[str]) -> None:
+    def __init__(self, AddressLine: Optional[str], CityName: Optional[str], CountryCode: Optional[str],
+                 PostalCode: Optional[int], StateCountyProv: Optional[StateCountyProv],
+                 StreetNmbr: Optional[str]) -> None:
         self.AddressLine = AddressLine
         self.CityName = CityName
         self.CountryCode = CountryCode
@@ -366,8 +410,11 @@ class Address:
         result["AddressLine"] = from_union([from_str, from_none], self.AddressLine)
         result["CityName"] = from_union([from_str, from_none], self.CityName)
         result["CountryCode"] = from_union([from_str, from_none], self.CountryCode)
-        result["PostalCode"] = from_union([lambda x: from_none((lambda x: is_type(type(None), x))(x)), lambda x: from_str((lambda x: str((lambda x: is_type(int, x))(x)))(x))], self.PostalCode)
-        result["StateCountyProv"] = from_union([lambda x: to_class(StateCountyProv, x), from_none], self.StateCountyProv)
+        result["PostalCode"] = from_union([lambda x: from_none((lambda x: is_type(type(None), x))(x)),
+                                           lambda x: from_str((lambda x: str((lambda x: is_type(int, x))(x)))(x))],
+                                          self.PostalCode)
+        result["StateCountyProv"] = from_union([lambda x: to_class(StateCountyProv, x), from_none],
+                                               self.StateCountyProv)
         result["StreetNmbr"] = from_union([from_str, from_none], self.StreetNmbr)
         return result
 
@@ -447,12 +494,14 @@ class ContactNumbers:
     @staticmethod
     def from_dict(obj: Any) -> 'ContactNumbers':
         assert isinstance(obj, dict)
-        ContactNumber = from_union([lambda x: from_list(ContactNumber.from_dict, x), from_none], obj.get("ContactNumber"))
+        ContactNumber = from_union([lambda x: from_list(ContactNumber.from_dict, x), from_none],
+                                   obj.get("ContactNumber"))
         return ContactNumbers(ContactNumber)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["ContactNumber"] = from_union([lambda x: from_list(lambda x: to_class(ContactNumber, x), x), from_none], self.ContactNumber)
+        result["ContactNumber"] = from_union([lambda x: from_list(lambda x: to_class(ContactNumber, x), x), from_none],
+                                             self.ContactNumber)
         return result
 
 
@@ -462,7 +511,8 @@ class PersonName:
     GivenName: Optional[str]
     Surname: Optional[str]
 
-    def __init__(self, NameNumber: Optional[str], PassengerType: Optional[str], GivenName: Optional[str], Surname: Optional[str]) -> None:
+    def __init__(self, NameNumber: Optional[str], PassengerType: Optional[str], GivenName: Optional[str],
+                 Surname: Optional[str]) -> None:
         self.NameNumber = NameNumber
         self.PassengerType = PassengerType
         self.GivenName = GivenName
@@ -486,25 +536,53 @@ class PersonName:
         return result
 
 
+class Email:
+    NameNumber: Optional[str]
+    Address: Optional[str]
+
+    def __init__(self, NameNumber: Optional[str], Address: Optional[str]) -> None:
+        self.NameNumber = NameNumber
+        self.Address = Address
+
+    @staticmethod
+    def from_dict(obj: Any) -> 'Email':
+        assert isinstance(obj, dict)
+        NameNumber = from_union([from_str, from_none], obj.get("NameNumber"))
+        Address = from_union([from_str, from_none], obj.get("Address"))
+        return Email(NameNumber, Address)
+
+    def to_dict(self) -> dict:
+        result: dict = {}
+        result["NameNumber"] = from_union([from_str, from_none], self.NameNumber)
+        result["Address"] = from_union([from_str, from_none], self.Address)
+        return result
+
+
 class CustomerInfo:
     ContactNumbers: Optional[ContactNumbers]
     PersonName: Optional[List[PersonName]]
+    Email: Optional[List[Email]]
 
-    def __init__(self, ContactNumbers: Optional[ContactNumbers], PersonName: Optional[List[PersonName]]) -> None:
+    def __init__(self, ContactNumbers: Optional[ContactNumbers], PersonName: Optional[List[PersonName]],
+                 Email: Optional[List[Email]]) -> None:
         self.ContactNumbers = ContactNumbers
         self.PersonName = PersonName
+        self.Email = Email
 
     @staticmethod
     def from_dict(obj: Any) -> 'CustomerInfo':
         assert isinstance(obj, dict)
         ContactNumbers = from_union([ContactNumbers.from_dict, from_none], obj.get("ContactNumbers"))
         PersonName = from_union([lambda x: from_list(PersonName.from_dict, x), from_none], obj.get("PersonName"))
-        return CustomerInfo(ContactNumbers, PersonName)
+        Email = from_union([lambda x: from_list(Email.from_dict, x), from_none], obj.get("Email"))
+        return CustomerInfo(ContactNumbers, PersonName, Email)
 
     def to_dict(self) -> dict:
         result: dict = {}
         result["ContactNumbers"] = from_union([lambda x: to_class(ContactNumbers, x), from_none], self.ContactNumbers)
-        result["PersonName"] = from_union([lambda x: from_list(lambda x: to_class(PersonName, x), x), from_none], self.PersonName)
+        result["PersonName"] = from_union([lambda x: from_list(lambda x: to_class(PersonName, x), x), from_none],
+                                          self.PersonName)
+        result["Email"] = from_union([lambda x: from_list(lambda x: to_class(Email, x), x), from_none], self.Email)
         return result
 
 
@@ -538,7 +616,9 @@ class CreatePassengerNameRecordRQ:
     AirBook: Optional[AirBook]
     PostProcessing: Optional[PostProcessing]
 
-    def __init__(self, version: Optional[str], targetCity: Optional[str], haltOnAirPriceError: Optional[bool], TravelItineraryAddInfo: Optional[TravelItineraryAddInfo], AirBook: Optional[AirBook], PostProcessing: Optional[PostProcessing]) -> None:
+    def __init__(self, version: Optional[str], targetCity: Optional[str], haltOnAirPriceError: Optional[bool],
+                 TravelItineraryAddInfo: Optional[TravelItineraryAddInfo], AirBook: Optional[AirBook],
+                 PostProcessing: Optional[PostProcessing]) -> None:
         self.version = version
         self.targetCity = targetCity
         self.haltOnAirPriceError = haltOnAirPriceError
@@ -552,17 +632,20 @@ class CreatePassengerNameRecordRQ:
         version = from_union([from_str, from_none], obj.get("version"))
         targetCity = from_union([from_str, from_none], obj.get("targetCity"))
         haltOnAirPriceError = from_union([from_bool, from_none], obj.get("haltOnAirPriceError"))
-        TravelItineraryAddInfo = from_union([TravelItineraryAddInfo.from_dict, from_none], obj.get("TravelItineraryAddInfo"))
+        TravelItineraryAddInfo = from_union([TravelItineraryAddInfo.from_dict, from_none],
+                                            obj.get("TravelItineraryAddInfo"))
         AirBook = from_union([AirBook.from_dict, from_none], obj.get("AirBook"))
         PostProcessing = from_union([PostProcessing.from_dict, from_none], obj.get("PostProcessing"))
-        return CreatePassengerNameRecordRQ(version, targetCity, haltOnAirPriceError, TravelItineraryAddInfo, AirBook, PostProcessing)
+        return CreatePassengerNameRecordRQ(version, targetCity, haltOnAirPriceError, TravelItineraryAddInfo, AirBook,
+                                           PostProcessing)
 
     def to_dict(self) -> dict:
         result: dict = {}
         result["version"] = from_union([from_str, from_none], self.version)
         result["targetCity"] = from_union([from_str, from_none], self.targetCity)
         result["haltOnAirPriceError"] = from_union([from_bool, from_none], self.haltOnAirPriceError)
-        result["TravelItineraryAddInfo"] = from_union([lambda x: to_class(TravelItineraryAddInfo, x), from_none], self.TravelItineraryAddInfo)
+        result["TravelItineraryAddInfo"] = from_union([lambda x: to_class(TravelItineraryAddInfo, x), from_none],
+                                                      self.TravelItineraryAddInfo)
         result["AirBook"] = from_union([lambda x: to_class(AirBook, x), from_none], self.AirBook)
         result["PostProcessing"] = from_union([lambda x: to_class(PostProcessing, x), from_none], self.PostProcessing)
         return result
@@ -577,12 +660,14 @@ class Welcome:
     @staticmethod
     def from_dict(obj: Any) -> 'Welcome':
         assert isinstance(obj, dict)
-        CreatePassengerNameRecordRQ = from_union([CreatePassengerNameRecordRQ.from_dict, from_none], obj.get("CreatePassengerNameRecordRQ"))
+        CreatePassengerNameRecordRQ = from_union([CreatePassengerNameRecordRQ.from_dict, from_none],
+                                                 obj.get("CreatePassengerNameRecordRQ"))
         return Welcome(CreatePassengerNameRecordRQ)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["CreatePassengerNameRecordRQ"] = from_union([lambda x: to_class(CreatePassengerNameRecordRQ, x), from_none], self.CreatePassengerNameRecordRQ)
+        result["CreatePassengerNameRecordRQ"] = from_union(
+            [lambda x: to_class(CreatePassengerNameRecordRQ, x), from_none], self.CreatePassengerNameRecordRQ)
         return result
 
 
