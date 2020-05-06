@@ -1502,10 +1502,7 @@ def createflightpnr():
     HaltOnStatuses = [CreatePNRModel.HaltOnStatus('HL'), CreatePNRModel.HaltOnStatus('KK'),
                       CreatePNRModel.HaltOnStatus('LL'), CreatePNRModel.HaltOnStatus('NN'),
                       CreatePNRModel.HaltOnStatus('NO')]
-    FlightSegment = CreatePNRModel.FlightSegment('2020-06-20T10:13:00', '2020-06-20T07:00:00', '1848', '1', 'Y', 'GK',
-                                                 CreatePNRModel.NLocation('SFO'),
-                                                 CreatePNRModel.MarketingAirline('UA', '1848'),
-                                                 CreatePNRModel.NLocation('EWR'), bool(0))
+    FlightSegment = request.json['CreatePassengerNameRecordRQ']['AirBook']['OriginDestinationInformation']['FlightSegment']
     OriginDestinationInformations = [FlightSegment]
     AirBook = CreatePNRModel.AirBook(RetryRebook, HaltOnStatuses,
                                      CreatePNRModel.OriginDestinationInformation(OriginDestinationInformations))
