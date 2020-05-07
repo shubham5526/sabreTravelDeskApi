@@ -16,7 +16,7 @@ app.config["DEBUG"] = True
 BFM_Endpoint = "https://api-crt.cert.havail.sabre.com/v1/offers/shop"
 PNR_Endpoint = "https://api-crt.cert.havail.sabre.com/v2.3.0/passenger/records?mode=create"
 
-API_KEY = "T1RLAQL2f74iXSYw84qllX7u4YLF58fdihB2tMTvkZRNTBx5TQ3aK2LBAACwWVROmb4LYJqeRo5Wsc8ac4mpeH1AQmTVPEdx/jRIGh8vyjr4gGhLEvw1F7SL/0sQ6qNUuQuKRaA7C6JpjJCXeiLeZ9RddMo7RL9sfvcKwWZzF6vmawWCBkgMcDnFBEW8zkwKyT9CW4nyZk8S1cza/67nmB78x/REU2jytq9+9Uv0uvw9eFVZDKNN6SowGP7HbxkyYGjJFkawu7TtTYxqcKtO8mzCZQiBajRtLZk/BQc*"
+API_KEY = "T1RLAQKquPscAd7ZBoJmq0h/idapysFNoRB2v0X4d7Q4YAmO0rwEiVVFAACwZNr+Aii0O89cGn4ORWMWplgosGAbZ9uhLSUQ3HxGPZ9sj1fWByri8y08hoXHcPxfTZmVyko/1OD12DM7LAlocwpQk/2ktTdilGizlVUP/MMIK4wYVay+D4JSeume1WZuT8eG3IfuCNvSucBX164npfK5resdmN044+2kdsHTm3clXr6QSkm1Jqw/U/YGsX2lm5vuGPgKNo2sGJ9Oj3t3QiFGbOWOHSBqitNLCZbGFGE*"
 AuthorizationHeader = {'Authorization': 'Bearer ' + API_KEY, 'Content-Type': 'application/json'}
 
 T = TypeVar("T")
