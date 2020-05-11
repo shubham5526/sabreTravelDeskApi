@@ -1493,9 +1493,7 @@ def createflightpnr():
     Ticketing = CreatePNRModel.Ticketing('7TAW')
     AgencyInfo = CreatePNRModel.AgencyInfo(Address, Ticketing)
     # ContactNumber = CreatePNRModel.ContactNumber('1.1', '817-555-1212', 'H') commented code
-    ContactNumbers = \
-    request.json['CreatePassengerNameRecordRQ']['TravelItineraryAddInfo']['CustomerInfo']['ContactNumbers'][
-        'ContactNumber']
+    ContactNumbers = request.json['CreatePassengerNameRecordRQ']['TravelItineraryAddInfo']['CustomerInfo']['ContactNumbers']['ContactNumber']
     ContactNumbers = CreatePNRModel.ContactNumbers(ContactNumbers)
     # PersonName = CreatePNRModel.PersonName('1.1', 'ADT', 'Shubbham', 'Gupta') commented code
     PersonNames = request.json['CreatePassengerNameRecordRQ']['TravelItineraryAddInfo']['CustomerInfo']['PersonName']
@@ -1506,11 +1504,9 @@ def createflightpnr():
     HaltOnStatuses = [CreatePNRModel.HaltOnStatus('HL'), CreatePNRModel.HaltOnStatus('KK'),
                       CreatePNRModel.HaltOnStatus('LL'), CreatePNRModel.HaltOnStatus('NN'),
                       CreatePNRModel.HaltOnStatus('NO')]
-    FlightSegment = request.json['CreatePassengerNameRecordRQ']['AirBook']['OriginDestinationInformation'][
-        'FlightSegment']
+    FlightSegment = request.json['CreatePassengerNameRecordRQ']['AirBook']['OriginDestinationInformation']['FlightSegment']
     OriginDestinationInformations = FlightSegment
-    AirBook = CreatePNRModel.AirBook(RetryRebook, HaltOnStatuses,
-                                     CreatePNRModel.OriginDestinationInformation(OriginDestinationInformations))
+    AirBook = CreatePNRModel.AirBook(RetryRebook, HaltOnStatuses, CreatePNRModel.OriginDestinationInformation(OriginDestinationInformations))
     Source = CreatePNRModel.Source('SP TEST')
     EmailEndTransaction = CreatePNRModel.EmailEndTransaction(bool(1))
     EndTransaction = CreatePNRModel.EndTransaction(Source, EmailEndTransaction)
