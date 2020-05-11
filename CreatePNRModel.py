@@ -608,6 +608,285 @@ class TravelItineraryAddInfo:
         return result
 
 
+class BookingInfo:
+    BookingKey: Optional[str]
+    RequestorID: Optional[str]
+
+    def __init__(self, BookingKey: Optional[str], RequestorID: Optional[str]) -> None:
+        self.BookingKey = BookingKey
+        self.RequestorID = RequestorID
+
+    @staticmethod
+    def from_dict(obj: Any) -> 'BookingInfo':
+        assert isinstance(obj, dict)
+        BookingKey = obj.get("BookingKey")
+        RequestorID = from_union([from_str, from_none], obj.get("RequestorID"))
+        return BookingInfo(BookingKey, RequestorID)
+
+    def to_dict(self) -> dict:
+        result: dict = {}
+        result["BookingKey"] = self.BookingKey
+        result["RequestorID"] = from_union([from_str, from_none], self.RequestorID)
+        return result
+
+
+class FullCardHolderName:
+    FirstName: Optional[str]
+    LastName: Optional[str]
+
+    def __init__(self, FirstName: Optional[str], LastName: Optional[str]) -> None:
+        self.FirstName = FirstName
+        self.LastName = LastName
+
+    @staticmethod
+    def from_dict(obj: Any) -> 'FullCardHolderName':
+        assert isinstance(obj, dict)
+        FirstName = from_union([from_str, from_none], obj.get("FirstName"))
+        LastName = from_union([from_str, from_none], obj.get("LastName"))
+        return FullCardHolderName(FirstName, LastName)
+
+    def to_dict(self) -> dict:
+        result: dict = {}
+        result["FirstName"] = from_union([from_str, from_none], self.FirstName)
+        result["LastName"] = from_union([from_str, from_none], self.LastName)
+        return result
+
+
+class PaymentCard:
+    PaymentType: Optional[str]
+    CardCode: Optional[str]
+    CardNumber: Optional[str]
+    ExpiryMonth: Optional[int]
+    ExpiryYear: Optional[int]
+    FullCardHolderName: Optional[FullCardHolderName]
+    CSC: Optional[int]
+
+    def __init__(self, PaymentType: Optional[str], CardCode: Optional[str], CardNumber: Optional[str],
+                 ExpiryMonth: Optional[int], ExpiryYear: Optional[int],
+                 FullCardHolderName: Optional[FullCardHolderName], CSC: Optional[int]) -> None:
+        self.PaymentType = PaymentType
+        self.CardCode = CardCode
+        self.CardNumber = CardNumber
+        self.ExpiryMonth = ExpiryMonth
+        self.ExpiryYear = ExpiryYear
+        self.FullCardHolderName = FullCardHolderName
+        self.CSC = CSC
+
+    @staticmethod
+    def from_dict(obj: Any) -> 'PaymentCard':
+        assert isinstance(obj, dict)
+        PaymentType = from_union([from_str, from_none], obj.get("PaymentType"))
+        CardCode = from_union([from_str, from_none], obj.get("CardCode"))
+        CardNumber = from_union([from_str, from_none], obj.get("CardNumber"))
+        ExpiryMonth = from_union([from_int, from_none], obj.get("ExpiryMonth"))
+        ExpiryYear = from_union([from_none, lambda x: int(from_str(x))], obj.get("ExpiryYear"))
+        FullCardHolderName = from_union([FullCardHolderName.from_dict, from_none], obj.get("FullCardHolderName"))
+        CSC = from_union([from_none, lambda x: int(from_str(x))], obj.get("CSC"))
+        return PaymentCard(PaymentType, CardCode, CardNumber, ExpiryMonth, ExpiryYear, FullCardHolderName, CSC)
+
+    def to_dict(self) -> dict:
+        result: dict = {}
+        result["PaymentType"] = from_union([from_str, from_none], self.PaymentType)
+        result["CardCode"] = from_union([from_str, from_none], self.CardCode)
+        result["CardNumber"] = from_union([from_str, from_none], self.CardNumber)
+        result["ExpiryMonth"] = from_union([from_int, from_none], self.ExpiryMonth)
+        result["ExpiryYear"] = from_union([lambda x: from_none((lambda x: is_type(type(None), x))(x)),
+                                           lambda x: from_str((lambda x: str((lambda x: is_type(int, x))(x)))(x))],
+                                          self.ExpiryYear)
+        result["FullCardHolderName"] = from_union([lambda x: to_class(FullCardHolderName, x), from_none],
+                                                  self.FullCardHolderName)
+        result["CSC"] = from_union([lambda x: from_none((lambda x: is_type(type(None), x))(x)),
+                                    lambda x: from_str((lambda x: str((lambda x: is_type(int, x))(x)))(x))], self.CSC)
+        return result
+
+
+class FormOfPayment:
+    PaymentCard: Optional[PaymentCard]
+
+    def __init__(self, PaymentCard: Optional[PaymentCard]) -> None:
+        self.PaymentCard = PaymentCard
+
+    @staticmethod
+    def from_dict(obj: Any) -> 'FormOfPayment':
+        assert isinstance(obj, dict)
+        PaymentCard = from_union([PaymentCard.from_dict, from_none], obj.get("PaymentCard"))
+        return FormOfPayment(PaymentCard)
+
+    def to_dict(self) -> dict:
+        result: dict = {}
+        result["PaymentCard"] = from_union([lambda x: to_class(PaymentCard, x), from_none], self.PaymentCard)
+        return result
+
+
+class PaymentInformation:
+    FormOfPayment: Optional[FormOfPayment]
+    Type: Optional[str]
+
+    def __init__(self, FormOfPayment: Optional[FormOfPayment], Type: Optional[str]) -> None:
+        self.FormOfPayment = FormOfPayment
+        self.Type = Type
+
+    @staticmethod
+    def from_dict(obj: Any) -> 'PaymentInformation':
+        assert isinstance(obj, dict)
+        FormOfPayment = from_union([FormOfPayment.from_dict, from_none], obj.get("FormOfPayment"))
+        Type = from_union([from_str, from_none], obj.get("Type"))
+        return PaymentInformation(FormOfPayment, Type)
+
+    def to_dict(self) -> dict:
+        result: dict = {}
+        result["FormOfPayment"] = from_union([lambda x: to_class(FormOfPayment, x), from_none], self.FormOfPayment)
+        result["Type"] = from_union([from_str, from_none], self.Type)
+        return result
+
+
+class Contact:
+    Phone: Optional[str]
+
+    def __init__(self, Phone: Optional[str]) -> None:
+        self.Phone = Phone
+
+    @staticmethod
+    def from_dict(obj: Any) -> 'Contact':
+        assert isinstance(obj, dict)
+        Phone = from_union([from_str, from_none], obj.get("Phone"))
+        return Contact(Phone)
+
+    def to_dict(self) -> dict:
+        result: dict = {}
+        result["Phone"] = from_union([from_str, from_none], self.Phone)
+        return result
+
+
+class Guest:
+    Contact: Optional[Contact]
+    FirstName: Optional[str]
+    LastName: Optional[str]
+    Index: Optional[int]
+    LeadGuest: Optional[bool]
+    Type: Optional[int]
+    Email: Optional[str]
+
+    def __init__(self, Contact: Optional[Contact], FirstName: Optional[str], LastName: Optional[str],
+                 Index: Optional[int], LeadGuest: Optional[bool], Type: Optional[int], Email: Optional[str]) -> None:
+        self.Contact = Contact
+        self.FirstName = FirstName
+        self.LastName = LastName
+        self.Index = Index
+        self.LeadGuest = LeadGuest
+        self.Type = Type
+        self.Email = Email
+
+    @staticmethod
+    def from_dict(obj: Any) -> 'Guest':
+        assert isinstance(obj, dict)
+        Contact = from_union([Contact.from_dict, from_none], obj.get("Contact"))
+        FirstName = from_union([from_str, from_none], obj.get("FirstName"))
+        LastName = from_union([from_str, from_none], obj.get("LastName"))
+        Index = from_union([from_int, from_none], obj.get("Index"))
+        LeadGuest = from_union([from_bool, from_none], obj.get("LeadGuest"))
+        Type = from_union([from_int, from_none], obj.get("Type"))
+        Email = from_union([from_str, from_none], obj.get("Email"))
+        return Guest(Contact, FirstName, LastName, Index, LeadGuest, Type, Email)
+
+    def to_dict(self) -> dict:
+        result: dict = {}
+        result["Contact"] = from_union([lambda x: to_class(Contact, x), from_none], self.Contact)
+        result["FirstName"] = from_union([from_str, from_none], self.FirstName)
+        result["LastName"] = from_union([from_str, from_none], self.LastName)
+        result["Index"] = from_union([from_int, from_none], self.Index)
+        result["LeadGuest"] = from_union([from_bool, from_none], self.LeadGuest)
+        result["Type"] = from_union([from_int, from_none], self.Type)
+        result["Email"] = from_union([from_str, from_none], self.Email)
+        return result
+
+
+class Guests:
+    Guest: Optional[List[Guest]]
+
+    def __init__(self, Guest: Optional[List[Guest]]) -> None:
+        self.Guest = Guest
+
+    @staticmethod
+    def from_dict(obj: Any) -> 'Guests':
+        assert isinstance(obj, dict)
+        Guest = from_union([lambda x: from_list(Guest.from_dict, x), from_none], obj.get("Guest"))
+        return Guests(Guest)
+
+    def to_dict(self) -> dict:
+        result: dict = {}
+        result["Guest"] = from_union([lambda x: from_list(lambda x: to_class(Guest, x), x), from_none], self.Guest)
+        return result
+
+
+class Room:
+    Guests: Optional[Guests]
+    RoomIndex: Optional[int]
+
+    def __init__(self, Guests: Optional[Guests], RoomIndex: Optional[int]) -> None:
+        self.Guests = Guests
+        self.RoomIndex = RoomIndex
+
+    @staticmethod
+    def from_dict(obj: Any) -> 'Room':
+        assert isinstance(obj, dict)
+        Guests = from_union([Guests.from_dict, from_none], obj.get("Guests"))
+        RoomIndex = from_union([from_int, from_none], obj.get("RoomIndex"))
+        return Room(Guests, RoomIndex)
+
+    def to_dict(self) -> dict:
+        result: dict = {}
+        result["Guests"] = from_union([lambda x: to_class(Guests, x), from_none], self.Guests)
+        result["RoomIndex"] = from_union([from_int, from_none], self.RoomIndex)
+        return result
+
+
+class Rooms:
+    Room: Optional[List[Room]]
+
+    def __init__(self, Room: Optional[List[Room]]) -> None:
+        self.Room = Room
+
+    @staticmethod
+    def from_dict(obj: Any) -> 'Rooms':
+        assert isinstance(obj, dict)
+        Room = from_union([lambda x: from_list(Room.from_dict, x), from_none], obj.get("Room"))
+        return Rooms(Room)
+
+    def to_dict(self) -> dict:
+        result: dict = {}
+        result["Room"] = from_union([lambda x: from_list(lambda x: to_class(Room, x), x), from_none], self.Room)
+        return result
+
+
+class HotelBook:
+    BookingInfo: Optional[BookingInfo]
+    Rooms: Optional[Rooms]
+    PaymentInformation: Optional[PaymentInformation]
+
+    def __init__(self, BookingInfo: Optional[BookingInfo], Rooms: Optional[Rooms],
+                 PaymentInformation: Optional[PaymentInformation]) -> None:
+        self.BookingInfo = BookingInfo
+        self.Rooms = Rooms
+        self.PaymentInformation = PaymentInformation
+
+    @staticmethod
+    def from_dict(obj: Any) -> 'HotelBook':
+        assert isinstance(obj, dict)
+        BookingInfo = from_union([BookingInfo.from_dict, from_none], obj.get("BookingInfo"))
+        Rooms = from_union([Rooms.from_dict, from_none], obj.get("Rooms"))
+        PaymentInformation = from_union([PaymentInformation.from_dict, from_none], obj.get("PaymentInformation"))
+        return HotelBook(BookingInfo, Rooms, PaymentInformation)
+
+    def to_dict(self) -> dict:
+        result: dict = {}
+        result["BookingInfo"] = from_union([lambda x: to_class(BookingInfo, x), from_none], self.BookingInfo)
+        result["Rooms"] = from_union([lambda x: to_class(Rooms, x), from_none], self.Rooms)
+        result["PaymentInformation"] = from_union([lambda x: to_class(PaymentInformation, x), from_none],
+                                                  self.PaymentInformation)
+        return result
+
+
 class CreatePassengerNameRecordRQ:
     version: Optional[str]
     targetCity: Optional[str]
@@ -615,16 +894,18 @@ class CreatePassengerNameRecordRQ:
     TravelItineraryAddInfo: Optional[TravelItineraryAddInfo]
     AirBook: Optional[AirBook]
     PostProcessing: Optional[PostProcessing]
+    HotelBook: Optional[HotelBook]
 
     def __init__(self, version: Optional[str], targetCity: Optional[str], haltOnAirPriceError: Optional[bool],
                  TravelItineraryAddInfo: Optional[TravelItineraryAddInfo], AirBook: Optional[AirBook],
-                 PostProcessing: Optional[PostProcessing]) -> None:
+                 PostProcessing: Optional[PostProcessing], HotelBook: Optional[HotelBook]) -> None:
         self.version = version
         self.targetCity = targetCity
         self.haltOnAirPriceError = haltOnAirPriceError
         self.TravelItineraryAddInfo = TravelItineraryAddInfo
         self.AirBook = AirBook
         self.PostProcessing = PostProcessing
+        self.HotelBook = HotelBook
 
     @staticmethod
     def from_dict(obj: Any) -> 'CreatePassengerNameRecordRQ':
@@ -635,9 +916,10 @@ class CreatePassengerNameRecordRQ:
         TravelItineraryAddInfo = from_union([TravelItineraryAddInfo.from_dict, from_none],
                                             obj.get("TravelItineraryAddInfo"))
         AirBook = from_union([AirBook.from_dict, from_none], obj.get("AirBook"))
+        #HotelBook = from_union([HotelBook.from_dict, from_none], obj.get("HotelBook"))
         PostProcessing = from_union([PostProcessing.from_dict, from_none], obj.get("PostProcessing"))
         return CreatePassengerNameRecordRQ(version, targetCity, haltOnAirPriceError, TravelItineraryAddInfo, AirBook,
-                                           PostProcessing)
+                                           PostProcessing, HotelBook)
 
     def to_dict(self) -> dict:
         result: dict = {}
@@ -648,6 +930,7 @@ class CreatePassengerNameRecordRQ:
                                                       self.TravelItineraryAddInfo)
         result["AirBook"] = from_union([lambda x: to_class(AirBook, x), from_none], self.AirBook)
         result["PostProcessing"] = from_union([lambda x: to_class(PostProcessing, x), from_none], self.PostProcessing)
+        #result["HotelBook"] = from_union([lambda x: to_class(HotelBook, x), from_none], self.HotelBook)
         return result
 
 
