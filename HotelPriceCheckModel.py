@@ -93,6 +93,6 @@ class Welcome:
 def welcome_from_dict(s: Any) -> Welcome:
     return Welcome.from_dict(s)
 
-
+ 
 def welcome_to_dict(x: Welcome) -> Any:
     return to_class(Welcome, x)
