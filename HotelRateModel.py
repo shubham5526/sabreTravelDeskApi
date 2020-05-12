@@ -165,12 +165,12 @@ class RateRange:
 
 
 class Room:
-    ChildAges: Optional[int]
+    ChildAges: Optional[str]
     Index: Optional[int]
     Adults: Optional[int]
     Children: Optional[int]
 
-    def __init__(self, ChildAges: Optional[int], Index: Optional[int], Adults: Optional[int], Children: Optional[int]) -> None:
+    def __init__(self, ChildAges: Optional[str], Index: Optional[int], Adults: Optional[int], Children: Optional[int]) -> None:
         self.ChildAges = ChildAges
         self.Index = Index
         self.Adults = Adults
@@ -179,7 +179,7 @@ class Room:
     @staticmethod
     def from_dict(obj: Any) -> 'Room':
         assert isinstance(obj, dict)
-        ChildAges = from_union([from_none, lambda x: int(from_str(x))], obj.get("ChildAges"))
+        ChildAges =  obj.get("ChildAges")
         Index = from_union([from_int, from_none], obj.get("Index"))
         Adults = from_union([from_int, from_none], obj.get("Adults"))
         Children = from_union([from_int, from_none], obj.get("Children"))
@@ -187,7 +187,7 @@ class Room:
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["ChildAges"] = from_union([lambda x: from_none((lambda x: is_type(type(None), x))(x)), lambda x: from_str((lambda x: str((lambda x: is_type(int, x))(x)))(x))], self.ChildAges)
+        result["ChildAges"] = self.ChildAges
         result["Index"] = from_union([from_int, from_none], self.Index)
         result["Adults"] = from_union([from_int, from_none], self.Adults)
         result["Children"] = from_union([from_int, from_none], self.Children)
@@ -241,16 +241,16 @@ class RateInfoRef:
     InfoSource: Optional[str]
     CurrencyCode: Optional[str]
     PrepaidQualifier: Optional[str]
-    ConvertedRateInfoOnly: Optional[bool]
 
-    def __init__(self, StayDateRange: Optional[StayDateRange], RateRange: Optional[RateRange], Rooms: Optional[Rooms], InfoSource: Optional[str], CurrencyCode: Optional[str], PrepaidQualifier: Optional[str], ConvertedRateInfoOnly: Optional[bool]) -> None:
+
+    def __init__(self, StayDateRange: Optional[StayDateRange], RateRange: Optional[RateRange], Rooms: Optional[Rooms], InfoSource: Optional[str], CurrencyCode: Optional[str], PrepaidQualifier: Optional[str]) -> None:
         self.StayDateRange = StayDateRange
         self.RateRange = RateRange
         self.Rooms = Rooms
         self.InfoSource = InfoSource
         self.CurrencyCode = CurrencyCode
         self.PrepaidQualifier = PrepaidQualifier
-        self.ConvertedRateInfoOnly = ConvertedRateInfoOnly
+
 
     @staticmethod
     def from_dict(obj: Any) -> 'RateInfoRef':
@@ -261,8 +261,8 @@ class RateInfoRef:
         InfoSource = from_union([from_str, from_none], obj.get("InfoSource"))
         CurrencyCode = from_union([from_str, from_none], obj.get("CurrencyCode"))
         PrepaidQualifier = from_union([from_str, from_none], obj.get("PrepaidQualifier"))
-        ConvertedRateInfoOnly = from_union([from_bool, from_none], obj.get("ConvertedRateInfoOnly"))
-        return RateInfoRef(StayDateRange, RateRange, Rooms, InfoSource, CurrencyCode, PrepaidQualifier, ConvertedRateInfoOnly)
+
+        return RateInfoRef(StayDateRange, RateRange, Rooms, InfoSource, CurrencyCode, PrepaidQualifier)
 
     def to_dict(self) -> dict:
         result: dict = {}
@@ -272,7 +272,7 @@ class RateInfoRef:
         result["InfoSource"] = from_union([from_str, from_none], self.InfoSource)
         result["CurrencyCode"] = from_union([from_str, from_none], self.CurrencyCode)
         result["PrepaidQualifier"] = from_union([from_str, from_none], self.PrepaidQualifier)
-        result["ConvertedRateInfoOnly"] = from_union([from_bool, from_none], self.ConvertedRateInfoOnly)
+
         return result
 
 
