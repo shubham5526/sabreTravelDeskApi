@@ -9,15 +9,61 @@ from datetime import datetime, timedelta
 import dateutil.parser
 
 import CreatePNRModel as CreatePNRModel
+import HotelRateModel as HotelRateModel
+import HotelPriceCheckModel as HotelPriceCheckModel
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
 BFM_Endpoint = "https://api-crt.cert.havail.sabre.com/v1/offers/shop"
 PNR_Endpoint = "https://api-crt.cert.havail.sabre.com/v2.3.0/passenger/records?mode=create"
+HotelRateInfo_Endpoint = "https://api-crt.cert.havail.sabre.com/v3.0.0/get/hotelrateinfo"
+HotelPriceCheck_Endpoint = "https://api-crt.cert.havail.sabre.com/v2.1.0/hotel/pricecheck"
 
 API_KEY = "T1RLAQLohoycgrgVDML+ck7LPu36DIn2FhDsSBHfz5lmRlyZug5f2JqaAACwdmHCfbuqNMyomfhGz40QCcAM2YcDUdn2CtPlLd37S6tFIZTl/KYSnJDNUP6ey85G8cgCrgu9Xzkv7rRnqrJeEiynGP49kuei6QcELnqL0xnhtSoE2QlDtifgF+GdTb4I9X2HzBcB9bftknZ4jQ+L/MKF7ZR/MnCzaIHeN4MzQv2VUKjq8bnztWR9JYASKeUFAJMmNDXEkTh5dEMIl6T28MAnPSF1dG7IA7j+G3oqdzw*"
-AuthorizationHeader = {'Authorization': 'Bearer ' + API_KEY, 'Content-Type': 'application/json'}
+AuthorizationHeader = {'Authorization': 'Bearer ' + API_KEY, 'Content-Type': 'application/json',
+                       'Accept': 'application/json'}
+
+hotelRateJSON = {
+    "GetHotelRateInfoRQ": {
+        "POS": {
+            "Source": {
+                "PseudoCityCode": "C3RK"
+            }
+        },
+        "HotelRefs": {
+            "HotelRef": {
+                "HotelCode": "100015408",
+                "CodeContext": "GLOBAL"
+            }
+        },
+        "RateInfoRef": {
+            "StayDateRange": {
+                "StartDate": "2020-05-15",
+                "EndDate": "2020-05-20"
+            },
+            "RateRange": {
+                "Min": 1,
+                "Max": 5000
+            },
+            "Rooms": {
+                "Room": [
+                    {
+                        "ChildAges": "1",
+                        "Index": 1,
+                        "Adults": 2,
+                        "Children": 1
+                    }
+                ]
+            },
+
+            "InfoSource": "100,112,113",
+            "CurrencyCode": "USD",
+            "PrepaidQualifier": "IncludePrepaid"
+        },
+        "version": "3.0.0"
+    }
+}
 
 T = TypeVar("T")
 EnumT = TypeVar("EnumT", bound=Enum)
@@ -1523,9 +1569,34 @@ def createflightpnr():
                                                                                  PostProcessing, '')
         del CreatePassengerNameRecordRQ.HotelBook
     else:
+        Source = HotelRateModel.Source('C3RK')
+        POS = HotelRateModel.Pos(Source)
+        HotelRef = HotelRateModel.HotelRef('100015408', 'GLOBAL')
+        HotelRefs = HotelRateModel.HotelRefs(HotelRef)
+        StayDateRange = HotelRateModel.StayDateRange('2020-05-15', '2020-05-20')
+        RateRange = HotelRateModel.RateRange(1, 5000)
+        Rooms = HotelRateModel.Rooms([HotelRateModel.Room('1', 1, 2, 1)])
+        RateInfoRef = HotelRateModel.RateInfoRef(StayDateRange, RateRange, Rooms, '100,112,113', 'USD',
+                                                 'IncludePrepaid')
+        GetHotelRateInfoRQ = HotelRateModel.GetHotelRateInfoRQ(POS, HotelRefs, RateInfoRef, '3.0.0')
+        HoteRateJSON = json.dumps(HotelRateModel.Welcome(GetHotelRateInfoRQ), default=lambda o: o.__dict__)
+        hotelRateInfoResponse = requests.post(url=HotelRateInfo_Endpoint, json=json.loads(HoteRateJSON),
+                                              headers=AuthorizationHeader)
+        RateKey = json.loads(hotelRateInfoResponse.content)['GetHotelRateInfoRS']['HotelRateInfos']['HotelRateInfo'][0][
+            'RateInfos']['RateInfo'][0]['RateKey']
+        RateInfoRef = HotelPriceCheckModel.RateInfoRef(RateKey)
+        HotelPriceCheckRQ = HotelPriceCheckModel.HotelPriceCheckRQ(RateInfoRef)
+        print(HotelPriceCheckRQ.RateInfoRef.RateKey)
+        HotelPriceCheckJSON = json.dumps(HotelPriceCheckModel.Welcome(HotelPriceCheckRQ), default=lambda o: o.__dict__)
+        hotelPriceCheckResponse = requests.post(url=HotelPriceCheck_Endpoint,
+                                                json=json.loads(HotelPriceCheckJSON),
+                                                headers=AuthorizationHeader)
+        print(hotelPriceCheckResponse.content)
+        BookingKey = json.loads(hotelPriceCheckResponse.content)['HotelPriceCheckRS']['PriceCheckInfo']['BookingKey']
         BookingInfo = request.json['CreatePassengerNameRecordRQ']['HotelBook']['BookingInfo']
         Rooms = request.json['CreatePassengerNameRecordRQ']['HotelBook']['Rooms']
         PaymentInformation = request.json['CreatePassengerNameRecordRQ']['HotelBook']['PaymentInformation']
+        BookingInfo['BookingKey'] = BookingKey
         HotelBook = CreatePNRModel.HotelBook(BookingInfo, Rooms, PaymentInformation)
         CreatePassengerNameRecordRQ = CreatePNRModel.CreatePassengerNameRecordRQ('2.3.0', 'C3RK', bool(0),
                                                                                  TravelItineraryAddInfo, '',
@@ -1535,6 +1606,7 @@ def createflightpnr():
 
     createPNRJson = json.dumps(CreatePNRModel.Welcome(CreatePassengerNameRecordRQ), default=lambda o: o.__dict__)
     print(json.loads(createPNRJson))
+
     r = requests.post(url=PNR_Endpoint, json=json.loads(createPNRJson), headers=AuthorizationHeader)
     print(r.content)
     return r.content
