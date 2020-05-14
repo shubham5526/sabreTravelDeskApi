@@ -12,7 +12,7 @@ t_pw = "b45f0c644d283cdcc737b6401b8d63a4bd6ebea93e9806db0c5e4c0fe26d1cf7"
 
 class PostgressController:
     def get_airports(self, searchTerm: str):
-        print(searchTerm)
+        print('searchTerm: ' +searchTerm)
         s = 'SELECT "AirportCode", "AirportName","City","Country" FROM "TravelDesk"."AirportDetails" WHERE LOWER("AirportCode") LIKE \'%' + searchTerm + '%\' OR LOWER("AirportName") LIKE \'%' + searchTerm + '%\' OR LOWER("City") LIKE \'%' + searchTerm + '%\' ORDER BY "AirportCode" ASC'
         try:
             db_conn = psycopg2.connect(host=t_host, port=t_port, dbname=t_dbname, user=t_user, password=t_pw)
