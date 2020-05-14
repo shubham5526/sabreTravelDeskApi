@@ -11,9 +11,12 @@ import dateutil.parser
 import CreatePNRModel as CreatePNRModel
 import HotelRateModel as HotelRateModel
 import HotelPriceCheckModel as HotelPriceCheckModel
+import CommonHelper as CommonHelper
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
+
+PCC_Code = 'C3RK'
 
 BFM_Endpoint = "https://api-crt.cert.havail.sabre.com/v1/offers/shop"
 PNR_Endpoint = "https://api-crt.cert.havail.sabre.com/v2.3.0/passenger/records?mode=create"
@@ -23,47 +26,6 @@ HotelPriceCheck_Endpoint = "https://api-crt.cert.havail.sabre.com/v2.1.0/hotel/p
 API_KEY = "T1RLAQLohoycgrgVDML+ck7LPu36DIn2FhDsSBHfz5lmRlyZug5f2JqaAACwdmHCfbuqNMyomfhGz40QCcAM2YcDUdn2CtPlLd37S6tFIZTl/KYSnJDNUP6ey85G8cgCrgu9Xzkv7rRnqrJeEiynGP49kuei6QcELnqL0xnhtSoE2QlDtifgF+GdTb4I9X2HzBcB9bftknZ4jQ+L/MKF7ZR/MnCzaIHeN4MzQv2VUKjq8bnztWR9JYASKeUFAJMmNDXEkTh5dEMIl6T28MAnPSF1dG7IA7j+G3oqdzw*"
 AuthorizationHeader = {'Authorization': 'Bearer ' + API_KEY, 'Content-Type': 'application/json',
                        'Accept': 'application/json'}
-
-hotelRateJSON = {
-    "GetHotelRateInfoRQ": {
-        "POS": {
-            "Source": {
-                "PseudoCityCode": "C3RK"
-            }
-        },
-        "HotelRefs": {
-            "HotelRef": {
-                "HotelCode": "100015408",
-                "CodeContext": "GLOBAL"
-            }
-        },
-        "RateInfoRef": {
-            "StayDateRange": {
-                "StartDate": "2020-05-15",
-                "EndDate": "2020-05-20"
-            },
-            "RateRange": {
-                "Min": 1,
-                "Max": 5000
-            },
-            "Rooms": {
-                "Room": [
-                    {
-                        "ChildAges": "1",
-                        "Index": 1,
-                        "Adults": 2,
-                        "Children": 1
-                    }
-                ]
-            },
-
-            "InfoSource": "100,112,113",
-            "CurrencyCode": "USD",
-            "PrepaidQualifier": "IncludePrepaid"
-        },
-        "version": "3.0.0"
-    }
-}
 
 T = TypeVar("T")
 EnumT = TypeVar("EnumT", bound=Enum)
@@ -1517,6 +1479,13 @@ def home():
     return "<h1>Distant Reading Archive</h1><p>This site is a prototype API for distant reading of science fiction novels.</p>"
 
 
+@app.route('/api/v1/resources/getairports', methods=['GET'])
+def getAirports():
+    searchTerm = request.args['searchTerm']
+    objCommonHelper = CommonHelper.PostgressController()
+    return objCommonHelper.get_airports(searchTerm.lower())
+
+
 @app.route('/api/v1/resources/bargainer/all', methods=['POST'])
 def api_all():
     # print(data['OTA_AirLowFareSearchRQ']['OriginDestinationInformation'][0]['DestinationLocation'])
@@ -1525,7 +1494,7 @@ def api_all():
     # change["DestinationLocation"] = "NYC"
     print(request.json)
     r = requests.post(url=BFM_Endpoint, json=request.json, headers=AuthorizationHeader)
-    print(r.content);
+    print(r.content)
     result = welcome_from_dict(json.loads(r.content))
     sabreAPIResponse = result.to_dict()
     return sabreAPIResponse
@@ -1564,12 +1533,12 @@ def createflightpnr():
         OriginDestinationInformations = FlightSegment
         AirBook = CreatePNRModel.AirBook(RetryRebook, HaltOnStatuses,
                                          CreatePNRModel.OriginDestinationInformation(OriginDestinationInformations))
-        CreatePassengerNameRecordRQ = CreatePNRModel.CreatePassengerNameRecordRQ('2.3.0', 'C3RK', bool(0),
+        CreatePassengerNameRecordRQ = CreatePNRModel.CreatePassengerNameRecordRQ('2.3.0', PCC_Code, bool(0),
                                                                                  TravelItineraryAddInfo, AirBook,
                                                                                  PostProcessing, '')
         del CreatePassengerNameRecordRQ.HotelBook
     else:
-        Source = HotelRateModel.Source('C3RK')
+        Source = HotelRateModel.Source(PCC_Code)
         POS = HotelRateModel.Pos(Source)
         HotelRef = HotelRateModel.HotelRef('100015408', 'GLOBAL')
         HotelRefs = HotelRateModel.HotelRefs(HotelRef)
@@ -1598,7 +1567,7 @@ def createflightpnr():
         PaymentInformation = request.json['CreatePassengerNameRecordRQ']['HotelBook']['PaymentInformation']
         BookingInfo['BookingKey'] = BookingKey
         HotelBook = CreatePNRModel.HotelBook(BookingInfo, Rooms, PaymentInformation)
-        CreatePassengerNameRecordRQ = CreatePNRModel.CreatePassengerNameRecordRQ('2.3.0', 'C3RK', bool(0),
+        CreatePassengerNameRecordRQ = CreatePNRModel.CreatePassengerNameRecordRQ('2.3.0', PCC_Code, bool(0),
                                                                                  TravelItineraryAddInfo, '',
                                                                                  PostProcessing, HotelBook)
         del CreatePassengerNameRecordRQ.AirBook
