@@ -12,7 +12,7 @@ t_pw = "b45f0c644d283cdcc737b6401b8d63a4bd6ebea93e9806db0c5e4c0fe26d1cf7"
 
 class PostgressController:
     def get_airports(self, searchTerm: str):
-        s = 'SELECT "AirportCode", "AirportName" FROM "TravelDesk"."AirportDetails" WHERE LOWER("AirportCode") LIKE \'%' + searchTerm + '%\' OR LOWER("AirportName") LIKE \'%' + searchTerm + '%\' OR LOWER("City") LIKE \'%' + searchTerm + '%\' ORDER BY "AirportCode" ASC'
+        s = 'SELECT "AirportCode", "AirportName","City","Country" FROM "TravelDesk"."AirportDetails" WHERE LOWER("AirportCode") LIKE \'%' + searchTerm + '%\' OR LOWER("AirportName") LIKE \'%' + searchTerm + '%\' OR LOWER("City") LIKE \'%' + searchTerm + '%\' ORDER BY "AirportCode" ASC'
         try:
             db_conn = psycopg2.connect(host=t_host, port=t_port, dbname=t_dbname, user=t_user, password=t_pw)
             db_cursor = db_conn.cursor()
@@ -27,7 +27,9 @@ class PostgressController:
             # Loop through the resulting list and print each user name, along with a line break:
         lstAirports = []
         for i in range(len(airportList)):
-            lstAirports.append(formatDataKeyValuePair(airportList[i][0].strip(), airportList[i][1].strip()))
+            lstAirports.append(
+                formatDataKeyValuePair(airportList[i][0].strip(), airportList[i][1].strip(), airportList[i][2],
+                                       airportList[i][3]))
         results = [obj.to_dict() for obj in lstAirports]
         jsdata = json.dumps(results)
         print(jsdata)
@@ -37,22 +39,30 @@ class PostgressController:
 
 
 class formatDataKeyValuePair:
-    label: str
-    value: str
+    AirportCode: str
+    AirportName: str
+    City: str
+    Country: str
 
-    def __init__(self, label: str, value: str) -> None:
-        self.label = label
-        self.value = value
+    def __init__(self, AirportCode: str, AirportName: str, City: str, Country: str) -> None:
+        self.AirportCode = AirportCode
+        self.AirportName = AirportName
+        self.City = City
+        self.Country = Country
 
     @staticmethod
     def from_dict(obj: Any) -> 'formatDataKeyValuePair':
         assert isinstance(obj, dict)
-        label = obj.get("label")
-        value = obj.get("value")
-        return formatDataKeyValuePair(label, value)
+        AirportCode = obj.get("AirportCode")
+        AirportName = obj.get("AirportName")
+        City = obj.get("City")
+        Country = obj.get("Country")
+        return formatDataKeyValuePair(AirportCode, AirportName, City, Country)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["label"] = self.label
-        result["value"] = self.value
+        result["AirportCode"] = self.AirportCode
+        result["AirportName"] = self.AirportName
+        result["City"] = self.City
+        result["Country"] = self.Country
         return result
