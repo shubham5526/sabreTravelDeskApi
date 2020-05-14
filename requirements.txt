@@ -3,4 +3,5 @@ Flask-RESTful
 Flask-SQLAlchemy
 requests
 python-dateutil
+psycopg2
 uwsgi
