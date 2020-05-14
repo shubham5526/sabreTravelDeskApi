@@ -12,7 +12,7 @@ import CreatePNRModel as CreatePNRModel
 import HotelRateModel as HotelRateModel
 import HotelPriceCheckModel as HotelPriceCheckModel
 import CommonHelper as CommonHelper
- 
+
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
