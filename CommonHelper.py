@@ -7,7 +7,7 @@ t_host = "ec2-34-225-82-212.compute-1.amazonaws.com"  # either "localhost", a do
 t_port = "5432"  # default postgres port
 t_dbname = "d4d3v5kbvtoml5"
 t_user = "ipywomgffvnkju"
-t_pw = "b45f0c644d283cdcc737b6401b8d63a4bd6ebea93e9806db0c5e4c0fe26d1cf7"
+t_pw = "c9130e90451aca35b2dcbb6df700f6691a0256dc548e427c425c8feafc15518f"
 
 
 class PostgressController:
