@@ -3,10 +3,10 @@ from flask import render_template
 import json
 from typing import Optional, Any, List, TypeVar, Type, cast, Callable
 
-t_host = "ec2-34-225-82-212.compute-1.amazonaws.com"  # either "localhost", a domain name, or an IP address.
+t_host = "ec2-52-72-221-20.compute-1.amazonaws.com"  # either "localhost", a domain name, or an IP address.
 t_port = "5432"  # default postgres port
-t_dbname = "d4d3v5kbvtoml5"
-t_user = "ipywomgffvnkju"
+t_dbname = "dcaj0g5nskdqq0"
+t_user = "fjdftktouujcmb"
 t_pw = "c9130e90451aca35b2dcbb6df700f6691a0256dc548e427c425c8feafc15518f"
 
 
