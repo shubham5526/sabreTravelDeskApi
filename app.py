@@ -23,7 +23,7 @@ PNR_Endpoint = "https://api-crt.cert.havail.sabre.com/v2.3.0/passenger/records?m
 HotelRateInfo_Endpoint = "https://api-crt.cert.havail.sabre.com/v3.0.0/get/hotelrateinfo"
 HotelPriceCheck_Endpoint = "https://api-crt.cert.havail.sabre.com/v2.1.0/hotel/pricecheck"
 
-API_KEY = "T1RLAQLohoycgrgVDML+ck7LPu36DIn2FhDsSBHfz5lmRlyZug5f2JqaAACwdmHCfbuqNMyomfhGz40QCcAM2YcDUdn2CtPlLd37S6tFIZTl/KYSnJDNUP6ey85G8cgCrgu9Xzkv7rRnqrJeEiynGP49kuei6QcELnqL0xnhtSoE2QlDtifgF+GdTb4I9X2HzBcB9bftknZ4jQ+L/MKF7ZR/MnCzaIHeN4MzQv2VUKjq8bnztWR9JYASKeUFAJMmNDXEkTh5dEMIl6T28MAnPSF1dG7IA7j+G3oqdzw*"
+API_KEY = "T1RLAQLQZBzJvguHY3coAzS3wrBbu33nOhA9o4YQPvt0Jlc0qvSVP+/JAACw9u6WuEqF7ZjYrAqu7gyX8j0kA92IKdLH9PI2xfKwphhW9T8XCv0a45Ikox7EZBEoEY017OELtaNW7lyVN2SyygivxtjO4gW5jz9jbqdkBF8DgLt0nN1SiOB1vBiaA0gPVwPMV1PLG9edLzRW2fv9SOR8DXxu+s30+Y1B347OThmgJRz2vLlC0l2vxaqxs0a4KEJneC8vKkt1IGa+46S90zmXrtA6aA/UwnSJu4oIqiw*"
 AuthorizationHeader = {'Authorization': 'Bearer ' + API_KEY, 'Content-Type': 'application/json',
                        'Accept': 'application/json'}
 
@@ -1538,21 +1538,22 @@ def createflightpnr():
                                                                                  PostProcessing, '')
         del CreatePassengerNameRecordRQ.HotelBook
     else:
-        Source = HotelRateModel.Source(PCC_Code)
-        POS = HotelRateModel.Pos(Source)
-        HotelRef = HotelRateModel.HotelRef('100015408', 'GLOBAL')
-        HotelRefs = HotelRateModel.HotelRefs(HotelRef)
-        StayDateRange = HotelRateModel.StayDateRange('2020-05-15', '2020-05-20')
-        RateRange = HotelRateModel.RateRange(1, 5000)
-        Rooms = HotelRateModel.Rooms([HotelRateModel.Room('1', 1, 2, 1)])
-        RateInfoRef = HotelRateModel.RateInfoRef(StayDateRange, RateRange, Rooms, '100,112,113', 'USD',
-                                                 'IncludePrepaid')
-        GetHotelRateInfoRQ = HotelRateModel.GetHotelRateInfoRQ(POS, HotelRefs, RateInfoRef, '3.0.0')
-        HoteRateJSON = json.dumps(HotelRateModel.Welcome(GetHotelRateInfoRQ), default=lambda o: o.__dict__)
-        hotelRateInfoResponse = requests.post(url=HotelRateInfo_Endpoint, json=json.loads(HoteRateJSON),
-                                              headers=AuthorizationHeader)
-        RateKey = json.loads(hotelRateInfoResponse.content)['GetHotelRateInfoRS']['HotelRateInfos']['HotelRateInfo'][0][
-            'RateInfos']['RateInfo'][0]['RateKey']
+        # Source = HotelRateModel.Source(PCC_Code)
+        # POS = HotelRateModel.Pos(Source)
+        # HotelRef = HotelRateModel.HotelRef('100015408', 'GLOBAL')
+        # HotelRefs = HotelRateModel.HotelRefs(HotelRef)
+        # StayDateRange = HotelRateModel.StayDateRange('2020-05-15', '2020-05-20')
+        # RateRange = HotelRateModel.RateRange(1, 5000)
+        # Rooms = HotelRateModel.Rooms([HotelRateModel.Room('1', 1, 2, 1)])
+        # RateInfoRef = HotelRateModel.RateInfoRef(StayDateRange, RateRange, Rooms, '100,112,113', 'USD',
+        #                                         'IncludePrepaid')
+        # GetHotelRateInfoRQ = HotelRateModel.GetHotelRateInfoRQ(POS, HotelRefs, RateInfoRef, '3.0.0')
+        # HoteRateJSON = json.dumps(HotelRateModel.Welcome(GetHotelRateInfoRQ), default=lambda o: o.__dict__)
+        # hotelRateInfoResponse = requests.post(url=HotelRateInfo_Endpoint, json=json.loads(HoteRateJSON),
+        #                                      headers=AuthorizationHeader)
+        # RateKey = json.loads(hotelRateInfoResponse.content)['GetHotelRateInfoRS']['HotelRateInfos']['HotelRateInfo'][0][
+        #    'RateInfos']['RateInfo'][0]['RateKey']
+        RateKey = request.json['CreatePassengerNameRecordRQ']['HotelRate']['RateKey']
         RateInfoRef = HotelPriceCheckModel.RateInfoRef(RateKey)
         HotelPriceCheckRQ = HotelPriceCheckModel.HotelPriceCheckRQ(RateInfoRef)
         print(HotelPriceCheckRQ.RateInfoRef.RateKey)
@@ -1583,4 +1584,3 @@ def createflightpnr():
 
 if __name__ == "__main__":
     app.run()
- 
