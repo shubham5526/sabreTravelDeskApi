@@ -1556,7 +1556,7 @@ def createflightpnr():
         RateKey = request.json['CreatePassengerNameRecordRQ']['HotelRate']['RateKey']
         RateInfoRef = HotelPriceCheckModel.RateInfoRef(RateKey)
         HotelPriceCheckRQ = HotelPriceCheckModel.HotelPriceCheckRQ(RateInfoRef)
-        print(HotelPriceCheckRQ.RateInfoRef.RateKey)
+        print('RateKey: ' + HotelPriceCheckRQ.RateInfoRef.RateKey)
         HotelPriceCheckJSON = json.dumps(HotelPriceCheckModel.Welcome(HotelPriceCheckRQ), default=lambda o: o.__dict__)
         hotelPriceCheckResponse = requests.post(url=HotelPriceCheck_Endpoint,
                                                 json=json.loads(HotelPriceCheckJSON),
