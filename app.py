@@ -23,7 +23,7 @@ PNR_Endpoint = "https://api-crt.cert.havail.sabre.com/v2.3.0/passenger/records?m
 HotelRateInfo_Endpoint = "https://api-crt.cert.havail.sabre.com/v3.0.0/get/hotelrateinfo"
 HotelPriceCheck_Endpoint = "https://api-crt.cert.havail.sabre.com/v2.1.0/hotel/pricecheck"
 
-API_KEY = "T1RLAQLQZBzJvguHY3coAzS3wrBbu33nOhA9o4YQPvt0Jlc0qvSVP+/JAACw9u6WuEqF7ZjYrAqu7gyX8j0kA92IKdLH9PI2xfKwphhW9T8XCv0a45Ikox7EZBEoEY017OELtaNW7lyVN2SyygivxtjO4gW5jz9jbqdkBF8DgLt0nN1SiOB1vBiaA0gPVwPMV1PLG9edLzRW2fv9SOR8DXxu+s30+Y1B347OThmgJRz2vLlC0l2vxaqxs0a4KEJneC8vKkt1IGa+46S90zmXrtA6aA/UwnSJu4oIqiw*"
+API_KEY = "T1RLAQLjCtrA8W4GwyQyC5Vg3G75Tg5fhRBLKku5f8oNZCfA0QcmAV6jAACwShkAe0rwDa36FNiGFPmKzPpw7Y7Tils911+hwM3rB5SS3l4ahpwHFkqbzh9+zXpbuz2dDPP6ys0Te5IuW0N0ENIn5NcUHLJR1CsDNCMRIrDw9oP04w0GfOF880w8OKPU5C1ZFftqe5lfinp9J/jmAXlPfThfGwvrOVL7FjOmUGoCNoaqEUJHYb4LA6CWTsNv/y6roztvCMHqVBSAl+gbXjyOWg6juxcUJFo6UqXlfrQ*"
 AuthorizationHeader = {'Authorization': 'Bearer ' + API_KEY, 'Content-Type': 'application/json',
                        'Accept': 'application/json'}
 
