@@ -18,14 +18,16 @@ app.config["DEBUG"] = True
 
 PCC_Code = 'C3RK'
 
+Authenticate_Endpoint = "https://api-crt.cert.havail.sabre.com/v2/auth/token"
 BFM_Endpoint = "https://api-crt.cert.havail.sabre.com/v1/offers/shop"
 PNR_Endpoint = "https://api-crt.cert.havail.sabre.com/v2.3.0/passenger/records?mode=create"
 HotelRateInfo_Endpoint = "https://api-crt.cert.havail.sabre.com/v3.0.0/get/hotelrateinfo"
 HotelPriceCheck_Endpoint = "https://api-crt.cert.havail.sabre.com/v2.1.0/hotel/pricecheck"
+HotelAvailability_Endpoint = "https://api-crt.cert.havail.sabre.com/v3.0.0/get/hotelavail"
+HotelDetail_Endpoint = "https://api-crt.cert.havail.sabre.com/v2.0.0/get/hoteldetails"
 
-API_KEY = "T1RLAQLjCtrA8W4GwyQyC5Vg3G75Tg5fhRBLKku5f8oNZCfA0QcmAV6jAACwShkAe0rwDa36FNiGFPmKzPpw7Y7Tils911+hwM3rB5SS3l4ahpwHFkqbzh9+zXpbuz2dDPP6ys0Te5IuW0N0ENIn5NcUHLJR1CsDNCMRIrDw9oP04w0GfOF880w8OKPU5C1ZFftqe5lfinp9J/jmAXlPfThfGwvrOVL7FjOmUGoCNoaqEUJHYb4LA6CWTsNv/y6roztvCMHqVBSAl+gbXjyOWg6juxcUJFo6UqXlfrQ*"
-AuthorizationHeader = {'Authorization': 'Bearer ' + API_KEY, 'Content-Type': 'application/json',
-                       'Accept': 'application/json'}
+API_KEY = ''
+AuthorizationHeader = {}
 
 T = TypeVar("T")
 EnumT = TypeVar("EnumT", bound=Enum)
@@ -1474,6 +1476,17 @@ def welcome_to_dict(x: Welcome) -> Any:
     return to_class(Welcome, x)
 
 
+def authenticate():
+    AuthenticationHeader = {'Authorization': 'Basic VmpFNk9UTTFNVEEzT2tNelVrczZRVUU9OlZFUnBaMms1TURFPQ==',
+                            'Content-Type': 'application/x-www-form-urlencoded', 'grant_type': 'client_credentials'}
+    authResponse = requests.post(url=Authenticate_Endpoint, headers=AuthenticationHeader)
+    API_KEY = json.loads(authResponse.content)['access_token']
+    AuthorizationHeader['Authorization'] = 'Bearer ' + API_KEY
+    AuthorizationHeader['Content-Type'] = 'application/json'
+    AuthorizationHeader['accept'] = 'application/json'
+    print(json.loads(authResponse.content)['access_token'])
+
+
 @app.route('/', methods=['GET'])
 def home():
     return "<h1>Distant Reading Archive</h1><p>This site is a prototype API for distant reading of science fiction novels.</p>"
@@ -1488,10 +1501,7 @@ def getAirports():
 
 @app.route('/api/v1/resources/bargainer/all', methods=['POST'])
 def api_all():
-    # print(data['OTA_AirLowFareSearchRQ']['OriginDestinationInformation'][0]['DestinationLocation'])
-    # for change in data['OTA_AirLowFareSearchRQ']['OriginDestinationInformation']:
-    # strip the contents of trailing white spaces (new line)
-    # change["DestinationLocation"] = "NYC"
+    authenticate()
     print(request.json)
     r = requests.post(url=BFM_Endpoint, json=request.json, headers=AuthorizationHeader)
     print(r.content)
@@ -1500,8 +1510,25 @@ def api_all():
     return sabreAPIResponse
 
 
+@app.route('/api/v1/resources/searchhotel', methods=['POST'])
+def searchhotel():
+    authenticate()
+    print(request.json)
+    hotelSearchResponse = requests.post(url=HotelAvailability_Endpoint, json=request.json, headers=AuthorizationHeader)
+    return hotelSearchResponse.content
+
+
+@app.route('/api/v1/resources/hoteldetails', methods=['POST'])
+def hoteldetails():
+    authenticate()
+    print(request.json)
+    hotelDetailResponse = requests.post(url=HotelDetail_Endpoint, json=request.json, headers=AuthorizationHeader)
+    return hotelDetailResponse.content
+
+
 @app.route('/api/v1/resources/createflightpnr', methods=['POST'])
 def createflightpnr():
+    authenticate()
     print(request.headers['Pnrfor'])
     StateCountyProv = CreatePNRModel.StateCountyProv('TX')
     Address = CreatePNRModel.Address('SABRE TRAVEL', 'SOUTHLAKE', 'US', '76092', StateCountyProv, '3150 SABRE DRIVE')
