@@ -7,6 +7,7 @@ from typing import Any, Optional, List, Union, TypeVar, Type, cast, Callable
 from enum import Enum
 from datetime import datetime, timedelta
 import dateutil.parser
+import base64
 
 import CreatePNRModel as CreatePNRModel
 import HotelRateModel as HotelRateModel
@@ -1494,7 +1495,7 @@ def home():
 
 @app.route('/api/v1/resources/authenticate', methods=['POST'])
 def clientauthentication():
-    print(request.headers['Authorization'])
+    print(base64.decodestring(request.headers['Authorization']))
     objCommonHelper = CommonHelper.PostgressController()
     return objCommonHelper.clientAuthentication('', '')
 
