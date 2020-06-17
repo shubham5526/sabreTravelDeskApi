@@ -5,3 +5,4 @@ requests
 python-dateutil
 psycopg2
 uwsgi
+pyjwt==1.4.2
