@@ -1495,7 +1495,7 @@ def home():
 
 @app.route('/api/v1/resources/authenticate', methods=['POST'])
 def clientauthentication():
-    print(base64.standard_b64decode(request.headers['Authorization']).split(' ')[1])
+    print(base64.standard_b64decode(request.headers['Authorization'].split(' ')[1]))
     objCommonHelper = CommonHelper.PostgressController()
     return objCommonHelper.clientAuthentication('', '')
 
