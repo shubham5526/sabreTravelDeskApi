@@ -83,3 +83,4 @@ class formatDataKeyValuePair:
         result["City"] = self.City
         result["Country"] = self.Country
         return result
+ 
