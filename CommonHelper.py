@@ -2,6 +2,8 @@ import psycopg2
 from flask import render_template
 import json
 from typing import Optional, Any, List, TypeVar, Type, cast, Callable
+import jwt
+import datetime
 
 t_host = "ec2-52-72-221-20.compute-1.amazonaws.com"  # either "localhost", a domain name, or an IP address.
 t_port = "5432"  # default postgres port
@@ -54,7 +56,19 @@ class PostgressController:
         if queryResponse is None:
             return "0"
         else:
-            return "1"
+            try:
+                payload = {
+                    'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, seconds=5),
+                    'iat': datetime.datetime.utcnow(),
+                    'sub': username
+                }
+                return jwt.encode(
+                    payload,
+                    '0v&0&sBH*aUX@q&&',
+                    algorithm='HS256'
+                )
+            except Exception as e:
+                return e
 
 
 class formatDataKeyValuePair:
