@@ -1496,8 +1496,9 @@ def home():
 @app.route('/api/v1/resources/authenticate', methods=['POST'])
 def clientauthentication():
     print(base64.standard_b64decode(request.headers['Authorization'].split(' ')[1]))
+    userpass = base64.standard_b64decode(request.headers['Authorization'].split(' ')[1])
     objCommonHelper = CommonHelper.PostgressController()
-    return objCommonHelper.clientAuthentication('', '')
+    return objCommonHelper.clientAuthentication(userpass.split(':')[0], userpass.split(':')[0])
 
 
 @app.route('/api/v1/resources/getairports', methods=['GET'])
