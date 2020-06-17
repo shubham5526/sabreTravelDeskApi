@@ -38,7 +38,9 @@ class PostgressController:
         return jsdata
 
     def clientAuthentication(self, username: str, password: str):
-        query = 'SELECT "Id" FROM "TravelDesk"."TravelDeskClients" WHERE "ClientId" = \'' + username + '\' AND "ClientPassword" = \''+ password + '\''
+        print(username)
+        print(password)
+        query = 'SELECT "Id", "ClientId", "ClientPassword" FROM "TravelDesk"."TravelDeskClients" WHERE "ClientId" = \'' + username + '\' AND "ClientPassword" = \''+ password + '\''
         #'SELECT "AirportCode", "AirportName","City","Country" FROM "TravelDesk"."AirportDetails" WHERE LOWER("AirportCode") LIKE \'%' + searchTerm + '%\' OR LOWER("AirportName") LIKE \'%' + searchTerm + '%\' OR LOWER("City") LIKE \'%' + searchTerm + '%\' ORDER BY "AirportCode" ASC'
         try:
             db_conn = psycopg2.connect(host=t_host, port=t_port, dbname=t_dbname, user=t_user, password=t_pw)
@@ -83,4 +85,3 @@ class formatDataKeyValuePair:
         result["City"] = self.City
         result["Country"] = self.Country
         return result
- 
