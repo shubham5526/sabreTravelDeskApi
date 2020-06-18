@@ -1503,6 +1503,7 @@ def clientauthentication():
 
 @app.route('/api/v1/resources/getairports', methods=['GET'])
 def getAirports():
+    print(request.headers['AuthToken'])
     searchTerm = request.args['searchTerm']
     objCommonHelper = CommonHelper.PostgressController()
     return objCommonHelper.get_airports(searchTerm.lower())
