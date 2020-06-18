@@ -1477,7 +1477,7 @@ def welcome_to_dict(x: Welcome) -> Any:
     return to_class(Welcome, x)
 
 
-def authenticate():
+def authenticateSabreAPI():
     AuthenticationHeader = {'Authorization': 'Basic VmpFNk9UTTFNVEEzT2tNelVrczZRVUU9OlZFUnBaMms1TURFPQ==',
                             'Content-Type': 'application/x-www-form-urlencoded', 'grant_type': 'client_credentials'}
     authResponse = requests.post(url=Authenticate_Endpoint, headers=AuthenticationHeader)
@@ -1504,14 +1504,21 @@ def clientauthentication():
 @app.route('/api/v1/resources/getairports', methods=['GET'])
 def getAirports():
     print(request.headers['AuthToken'])
+    authenticateSabreAPI()
     searchTerm = request.args['searchTerm']
     objCommonHelper = CommonHelper.PostgressController()
-    return objCommonHelper.get_airports(searchTerm.lower())
+    decodeRes = CommonHelper.PostgressController.decode_auth_token(request.headers['AuthToken'])
+    if decodeRes == 'Signature expired. Please log in again.':
+        return 'Login Expired'
+    elif decodeRes == 'Invalid token. Please log in again.':
+        return 'Login Expired'
+    else:
+        return objCommonHelper.get_airports(searchTerm.lower())
 
 
 @app.route('/api/v1/resources/bargainer/all', methods=['POST'])
 def api_all():
-    authenticate()
+    authenticateSabreAPI()
     print(request.json)
     r = requests.post(url=BFM_Endpoint, json=request.json, headers=AuthorizationHeader)
     print(r.content)
@@ -1522,7 +1529,7 @@ def api_all():
 
 @app.route('/api/v1/resources/searchhotel', methods=['POST'])
 def searchhotel():
-    authenticate()
+    authenticateSabreAPI()
     print(request.json)
     hotelSearchResponse = requests.post(url=HotelAvailability_Endpoint, json=request.json, headers=AuthorizationHeader)
     return hotelSearchResponse.content
@@ -1530,7 +1537,7 @@ def searchhotel():
 
 @app.route('/api/v1/resources/hoteldetails', methods=['POST'])
 def hoteldetails():
-    authenticate()
+    authenticateSabreAPI()
     print(request.json)
     hotelDetailResponse = requests.post(url=HotelDetail_Endpoint, json=request.json, headers=AuthorizationHeader)
     return hotelDetailResponse.content
@@ -1538,7 +1545,7 @@ def hoteldetails():
 
 @app.route('/api/v1/resources/createflightpnr', methods=['POST'])
 def createflightpnr():
-    authenticate()
+    authenticateSabreAPI()
     print(request.headers['Pnrfor'])
     StateCountyProv = CreatePNRModel.StateCountyProv('TX')
     Address = CreatePNRModel.Address('SABRE TRAVEL', 'SOUTHLAKE', 'US', '76092', StateCountyProv, '3150 SABRE DRIVE')
