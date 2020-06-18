@@ -70,6 +70,16 @@ class PostgressController:
             except Exception as e:
                 return e
 
+    @staticmethod
+    def decode_auth_token(auth_token):
+        try:
+            payload = jwt.decode(auth_token, '0v&0&sBH*aUX@q&&')
+            return payload['sub']
+        except jwt.ExpiredSignatureError:
+            return 'Signature expired. Please log in again.'
+        except jwt.InvalidTokenError:
+            return 'Invalid token. Please log in again.'
+
 
 class formatDataKeyValuePair:
     AirportCode: str
