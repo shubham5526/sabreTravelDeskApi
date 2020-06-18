@@ -1510,9 +1510,9 @@ def getAirports():
     decodeRes = CommonHelper.PostgressController.decode_auth_token(request.headers['AuthToken'])
     print(decodeRes)
     if decodeRes == 'Signature expired. Please log in again.':
-        return 'Login Expired'
+        return objCommonHelper.get_airports(searchTerm.lower())
     elif decodeRes == 'Invalid token. Please log in again.':
-        return 'Login Expired'
+        return objCommonHelper.get_airports(searchTerm.lower())
     else:
         return objCommonHelper.get_airports(searchTerm.lower())
 
