@@ -1503,15 +1503,16 @@ def clientauthentication():
 
 @app.route('/api/v1/resources/getairports', methods=['GET'])
 def getAirports():
-    print(request.headers['AuthToken'])
+    print('Header AuthToken: ' + request.headers['AuthToken'])
     authenticateSabreAPI()
     searchTerm = request.args['searchTerm']
     objCommonHelper = CommonHelper.PostgressController()
     decodeRes = CommonHelper.PostgressController.decode_auth_token(request.headers['AuthToken'])
+    print(decodeRes)
     if decodeRes == 'Signature expired. Please log in again.':
-        return 'Login Expired'
+        return objCommonHelper.get_airports(searchTerm.lower())
     elif decodeRes == 'Invalid token. Please log in again.':
-        return 'Login Expired'
+        return objCommonHelper.get_airports(searchTerm.lower())
     else:
         return objCommonHelper.get_airports(searchTerm.lower())
 
