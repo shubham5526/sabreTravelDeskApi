@@ -14,7 +14,10 @@ t_pw = "c9130e90451aca35b2dcbb6df700f6691a0256dc548e427c425c8feafc15518f"
 
 class PostgressController:
     def get_airports(self, searchTerm: str):
-        s = 'SELECT "AirportCode", "AirportName","City","Country" FROM "TravelDesk"."AirportDetails" WHERE LOWER("AirportCode") LIKE \'%' + searchTerm + '%\' OR LOWER("AirportName") LIKE \'%' + searchTerm + '%\' OR LOWER("City") LIKE \'%' + searchTerm + '%\' ORDER BY "AirportCode" ASC'
+        if str != '':
+            s = 'SELECT "AirportCode", "AirportName","City","Country" FROM "TravelDesk"."AirportDetails" WHERE LOWER("AirportCode") LIKE \'%' + searchTerm + '%\' OR LOWER("AirportName") LIKE \'%' + searchTerm + '%\' OR LOWER("City") LIKE \'%' + searchTerm + '%\' ORDER BY "AirportCode" ASC'
+        else:
+            s = 'SELECT "AirportCode", "AirportName","City","Country" FROM "TravelDesk"."AirportDetails" ORDER BY "AirportCode" ASC'
         try:
             db_conn = psycopg2.connect(host=t_host, port=t_port, dbname=t_dbname, user=t_user, password=t_pw)
             db_cursor = db_conn.cursor()
@@ -42,8 +45,8 @@ class PostgressController:
     def clientAuthentication(self, username: str, password: str):
         print(username)
         print(password)
-        query = 'SELECT "Id", "ClientId", "ClientPassword" FROM "TravelDesk"."TravelDeskClients" WHERE "ClientId" = \'' + username + '\' AND "ClientPassword" = \''+ password + '\''
-        #'SELECT "AirportCode", "AirportName","City","Country" FROM "TravelDesk"."AirportDetails" WHERE LOWER("AirportCode") LIKE \'%' + searchTerm + '%\' OR LOWER("AirportName") LIKE \'%' + searchTerm + '%\' OR LOWER("City") LIKE \'%' + searchTerm + '%\' ORDER BY "AirportCode" ASC'
+        query = 'SELECT "Id", "ClientId", "ClientPassword" FROM "TravelDesk"."TravelDeskClients" WHERE "ClientId" = \'' + username + '\' AND "ClientPassword" = \'' + password + '\''
+        # 'SELECT "AirportCode", "AirportName","City","Country" FROM "TravelDesk"."AirportDetails" WHERE LOWER("AirportCode") LIKE \'%' + searchTerm + '%\' OR LOWER("AirportName") LIKE \'%' + searchTerm + '%\' OR LOWER("City") LIKE \'%' + searchTerm + '%\' ORDER BY "AirportCode" ASC'
         try:
             db_conn = psycopg2.connect(host=t_host, port=t_port, dbname=t_dbname, user=t_user, password=t_pw)
             db_cursor = db_conn.cursor()
