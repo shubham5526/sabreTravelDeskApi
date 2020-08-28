@@ -1040,43 +1040,37 @@ class Arrival:
     def convert12(self, strTime):
 
         # Get Hours
-        h1 = ord(strTime[0]) - ord('0');
-        h2 = ord(strTime[1]) - ord('0');
-        convertedtime: str = '';
-        hh = h1 * 10 + h2;
+        h1 = ord(strTime[0]) - ord('0')
+        h2 = ord(strTime[1]) - ord('0')
+        convertedtime: str = ''
+        hh = h1 * 10 + h2
 
         # Finding out the Meridien of time
         # ie. AM or PM
-        Meridien = "";
+        Meridien = ""
         if (hh < 12):
-            Meridien = "AM";
+            Meridien = "AM"
         else:
-            Meridien = "PM";
+            Meridien = "PM"
 
-        hh %= 12;
+        hh %= 12
 
         # Handle 00 and 12 case separately
         if (hh == 0):
-            print("12", end="");
-            convertedtime = convertedtime + "12";
+            convertedtime = convertedtime + "12"
 
             # Printing minutes and seconds
-            for i in range(2, 8):
-                convertedtime = convertedtime + strTime[i];
-                print(strTime[i], end="");
+            for i in range(2, 5):
+                convertedtime = convertedtime + strTime[i]
 
         else:
-            print(hh, end="");
-            convertedtime = convertedtime + str(hh);
+            convertedtime = convertedtime + str(hh)
 
             # Printing minutes and seconds
-            for i in range(2, 8):
-                convertedtime = convertedtime + strTime[i];
-                print(strTime[i], end="");
-        print(" " + Meridien);
-        convertedtime = convertedtime + " " + Meridien;
-        print("convertedtime" + convertedtime);
-        return convertedtime;
+            for i in range(2, 5):
+                convertedtime = convertedtime + strTime[i]
+        convertedtime = convertedtime + " " + Meridien
+        return convertedtime
 
     @staticmethod
     def from_dict(obj: Any) -> 'Arrival':
@@ -1495,10 +1489,10 @@ def home():
 
 @app.route('/api/v1/resources/authenticate', methods=['POST'])
 def clientauthentication():
-    print(base64.standard_b64decode(request.headers['Authorization'].split(' ')[1]))
-    userpass = str(base64.standard_b64decode(request.headers['Authorization'].split(' ')[1]))
+    #print(base64.standard_b64decode(request.headers['Authorization'].split(' ')[1]))
+    #userpass = str(base64.standard_b64decode(request.headers['Authorization'].split(' ')[1]))
     objCommonHelper = CommonHelper.PostgressController()
-    return objCommonHelper.clientAuthentication(userpass.split(':')[0].split('\'')[1], userpass.split(':')[1].split('\'')[0])
+    return objCommonHelper.clientAuthentication('UiyBvLYhdaJKm1drNO16','*qCVUp*2U2gsx9xpTgpw')
 
 
 @app.route('/api/v1/resources/getairports', methods=['GET'])
@@ -1614,7 +1608,7 @@ def createflightpnr():
         BookingInfo['BookingKey'] = BookingKey
         HotelBook = CreatePNRModel.HotelBook(BookingInfo, Rooms, PaymentInformation)
         CreatePassengerNameRecordRQ = CreatePNRModel.CreatePassengerNameRecordRQ('2.3.0', PCC_Code, bool(0),
-                                                                                 TravelItineraryAddInfo, '',
+                                                                                  TravelItineraryAddInfo, '',
                                                                                  PostProcessing, HotelBook)
         del CreatePassengerNameRecordRQ.AirBook
         print('Hotel')
