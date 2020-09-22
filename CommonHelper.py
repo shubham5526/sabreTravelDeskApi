@@ -19,12 +19,15 @@ class PostgressController:
         else:
             s = 'SELECT "AirportCode", "AirportName","City","Country" FROM "TravelDesk"."AirportDetails" WHERE LOWER("Country") = "US" ORDER BY "AirportCode" ASC LIMIT 10'
         try:
+            print('SB Query formed');
             db_conn = psycopg2.connect(host=t_host, port=t_port, dbname=t_dbname, user=t_user, password=t_pw)
+            print('DB Connec established');
             db_cursor = db_conn.cursor()
             # Execute the SQL
             db_cursor.execute(s)
             # Retrieve records from Postgres into a Python List
             airportList = db_cursor.fetchall()
+            print('Rows retreived.');
         except psycopg2.Error as e:
             # t_message = "Database error: " + e + "/n SQL: " + s
             return render_template("error.html", t_message=e)
