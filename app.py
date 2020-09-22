@@ -1498,7 +1498,7 @@ def clientauthentication():
 @app.route('/api/v1/resources/getairports', methods=['GET'])
 def getAirports():
     print('Header AuthToken: ' + request.headers['AuthToken'])
-    authenticateSabreAPI()
+    #authenticateSabreAPI()
     searchTerm = request.args['searchTerm']
     objCommonHelper = CommonHelper.PostgressController()
     decodeRes = CommonHelper.PostgressController.decode_auth_token(request.headers['AuthToken'])
