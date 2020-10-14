@@ -1472,7 +1472,7 @@ def welcome_to_dict(x: Welcome) -> Any:
 
 
 def authenticateSabreAPI():
-    AuthenticationHeader = {'Authorization': 'Basic VmpFNk9UTTFNVEEzT2tNelVrczZRVUU9OlZFUnBaMms1TURFPQ==',
+    AuthenticationHeader = {'Authorization': 'Basic VmpFNk56TTRNalk1T2pWSVdVZzZRVUU9OlYxTTBNVEEyTkRrPQ==',
                             'Content-Type': 'application/x-www-form-urlencoded', 'grant_type': 'client_credentials'}
     authResponse = requests.post(url=Authenticate_Endpoint, headers=AuthenticationHeader)
     API_KEY = json.loads(authResponse.content)['access_token']
