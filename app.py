@@ -17,7 +17,7 @@ import CommonHelper as CommonHelper
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
-PCC_Code = 'C3RK'
+PCC_Code = '5HYH'
 
 Authenticate_Endpoint = "https://api-crt.cert.havail.sabre.com/v2/auth/token"
 BFM_Endpoint = "https://api-crt.cert.havail.sabre.com/v1/offers/shop"
